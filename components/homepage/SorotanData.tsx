@@ -17,7 +17,7 @@ interface InfografikItem {
   pdf_url: string | null;
 }
 
-const API_BASE = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'http://spr-open-data.local';
+const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || 'http://spr-open-data.local/wp-json').replace(/\/$/, '');
 
 const FILTER_TABS = [
   { slug: '', label: 'Semua' },
@@ -37,7 +37,7 @@ export function SorotanData() {
     const params = new URLSearchParams({ per_page: '4' });
     if (activeFilter) params.set('kategori', activeFilter);
 
-    fetch(`${API_BASE}/wp-json/spr/v1/infografik?${params}`)
+    fetch(`${WP_API}/spr/v1/infografik?${params}`)
       .then((r) => r.json())
       .then((res) => {
         setItems((res.data || []).slice(0, 4));

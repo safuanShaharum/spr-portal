@@ -49,11 +49,11 @@ export const LATEST_PRU: PRUData = {
   ],
 };
 
-const API_BASE = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'http://spr-open-data.local';
+const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || 'http://spr-open-data.local/wp-json').replace(/\/$/, '');
 
 export async function getLatestPRU(): Promise<PRUData> {
   try {
-    const res = await fetch(`${API_BASE}/wp-json/spr/v1/pru-latest`, {
+    const res = await fetch(`${WP_API}/spr/v1/pru-latest`, {
       next: { revalidate: 300 },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

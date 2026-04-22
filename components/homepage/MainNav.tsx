@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { startTransition, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -163,7 +163,7 @@ export function MainNav({ overlay }: MainNavProps = {}) {
         >
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-5 border-b border-white/10">
-            <Link href="/" onClick={() => setDrawerOpen(false)} className="flex items-center gap-3">
+            <Link href="/" onClick={() => startTransition(() => setDrawerOpen(false))} className="flex items-center gap-3">
               <Image
                 src="/images/LOGO_JATA.png"
                 alt="Jata Negara"
@@ -212,7 +212,8 @@ export function MainNav({ overlay }: MainNavProps = {}) {
                 <li key={item.label}>
                   <Link
                     href={item.href}
-                    onClick={() => setDrawerOpen(false)}
+                    prefetch
+                    onClick={() => startTransition(() => setDrawerOpen(false))}
                     className={`block px-4 py-3 rounded-xl text-base font-medium transition ${
                       isActive(item.href)
                         ? 'bg-white/15 text-white'

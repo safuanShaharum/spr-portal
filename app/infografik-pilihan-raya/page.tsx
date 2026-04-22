@@ -32,7 +32,7 @@ const TABS = [
 
 type TabSlug = typeof TABS[number]['slug'];
 
-const API_BASE = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'http://spr-open-data.local';
+const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || 'http://spr-open-data.local/wp-json').replace(/\/$/, '');
 
 export default function InfografikPage() {
   const [activeTab, setActiveTab] = useState<TabSlug>('pru');
@@ -44,7 +44,7 @@ export default function InfografikPage() {
   const [lightboxImage, setLightboxImage] = useState<InfografikItem | null>(null);
 
   useEffect(() => {
-    fetch(`${API_BASE}/wp-json/spr/v1/infografik/filters?kategori=${activeTab}`)
+    fetch(`${WP_API}/spr/v1/infografik/filters?kategori=${activeTab}`)
       .then(r => r.json())
       .then(setFilters)
       .catch(console.error);
@@ -56,7 +56,7 @@ export default function InfografikPage() {
     if (selectedYear) params.set('tahun', String(selectedYear));
     if (selectedPru)  params.set('pru_number', String(selectedPru));
 
-    fetch(`${API_BASE}/wp-json/spr/v1/infografik?${params}`)
+    fetch(`${WP_API}/spr/v1/infografik?${params}`)
       .then(r => r.json())
       .then(res => {
         setItems(res.data || []);
