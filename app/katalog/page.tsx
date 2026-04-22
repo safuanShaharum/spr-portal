@@ -13,6 +13,132 @@ import DocumentGrid from "@/components/katalog/DocumentGrid";
 import EmptyState from "@/components/katalog/EmptyState";
 import ElectionModal from "@/components/katalog/ElectionModal";
 import DetailModal from "@/components/katalog/DetailModal";
+import { getCatalogData } from "@/lib/catalog";
+
+type Row = Record<string, unknown>;
+
+// Legacy sheet keys (from BAHAGIAN_LIST) → published JSON slug. Sheets not in
+// this map fall through to the legacy /api/katalog endpoint.
+const CATALOG_SLUG_MAP: Record<string, string> = {
+  "keputusan-pru": "keputusan-pru",
+  "keputusan-dun": "keputusan-pru-dun",
+  "keputusan-prk": "keputusan-prk",
+  "penyata-belanja": "test-penyata-belanja-calon-pr",
+  "notis-warta": "notis-warta-belanja-pr",
+  "senarai-bpr": "senarai-bpr",
+  "pusat-mengundi": "bil-pm-ppc-ppru",
+  "petisyen": "bil-petisyen",
+  "bajet": "bajet-pr",
+  "kesalahan": "bil-kesalahan-pr",
+  "pemerhati": "bil-pemerhati",
+  "program-ve": "bil-program-ve",
+};
+
+// `bil-pemerhati` ships as wide rows (org names as columns). Mirrors the pivot
+// previously done server-side for sheet=pemerhati.
+const PEMERHATI_META_COLS = new Set([
+  "TAHUN PILIHAN RAYA", "PILIHAN RAYA", "NEGERI", "PARLIMEN", "DUN",
+]);
+function pivotPemerhati(rows: Row[]): Row[] {
+  const out: Row[] = [];
+  for (const row of rows) {
+    for (const [key, val] of Object.entries(row)) {
+      if (PEMERHATI_META_COLS.has(key)) continue;
+      const num = Number(val);
+      if (!isNaN(num) && num > 0) {
+        out.push({
+          "PILIHAN RAYA": row["PILIHAN RAYA"] || "",
+          NEGERI: row["NEGERI"] || "",
+          PARLIMEN: row["PARLIMEN"] || "",
+          ORGANISASI: key,
+          "BILANGAN PEMERHATI": num,
+        });
+      }
+    }
+  }
+  return out;
+}
+
+function yearKey(v: unknown): number {
+  return parseInt(String(v || "").replace(/\D/g, "").slice(-4), 10) || 0;
+}
+
+interface KatalogQuery {
+  negeri?: string;
+  tahun?: string;
+  pilihanRaya?: string;
+  jenisCalon?: string;
+  statusCalon?: string;
+}
+
+function filterRows(rows: Row[], q: KatalogQuery): Row[] {
+  let out = rows;
+  if (q.negeri) {
+    const needle = q.negeri.toLowerCase();
+    out = out.filter((r) =>
+      String(r["NEGERI"] || r["Negeri"] || r["NegeriPemohon"] || "")
+        .toLowerCase()
+        .includes(needle)
+    );
+  }
+  if (q.tahun) {
+    out = out.filter((r) => {
+      for (const col of ["TAHUN PILIHAN RAYA", "TAHUN", "Tahun", "TahunPilihanraya"]) {
+        const val = String(r[col] || "");
+        if (val && val.includes(q.tahun!)) return true;
+      }
+      return false;
+    });
+  }
+  if (q.pilihanRaya) {
+    const needle = q.pilihanRaya.toLowerCase();
+    out = out.filter((r) => {
+      for (const col of ["Nama Pilihan Raya", "PILIHAN RAYA", "NamaPR"]) {
+        const val = String(r[col] || "").toLowerCase();
+        if (val && val.includes(needle)) return true;
+      }
+      return false;
+    });
+  }
+  if (q.jenisCalon) {
+    out = out.filter(
+      (r) => String(r["JenisCalon"] || "").toLowerCase() === q.jenisCalon!.toLowerCase()
+    );
+  }
+  if (q.statusCalon) {
+    out = out.filter(
+      (r) =>
+        String(r["StatusCalon"] || r["STATUS"] || "").toLowerCase() ===
+        q.statusCalon!.toLowerCase()
+    );
+  }
+  return out;
+}
+
+function extractFilterOptions(rows: Row[]): Record<string, string[]> {
+  const negeri = new Set<string>();
+  const tahun = new Set<string>();
+  const pilihanRaya = new Set<string>();
+  for (const r of rows) {
+    for (const col of ["NEGERI", "Negeri", "NegeriPemohon"]) {
+      const v = String(r[col] || "").trim();
+      if (v) negeri.add(v);
+    }
+    for (const col of ["TAHUN PILIHAN RAYA", "TAHUN", "Tahun", "TahunPilihanraya"]) {
+      const v = String(r[col] || "").trim();
+      if (v) tahun.add(v);
+    }
+    for (const col of ["Nama Pilihan Raya", "PILIHAN RAYA", "NamaPR"]) {
+      const v = String(r[col] || "").trim();
+      if (v) pilihanRaya.add(v);
+    }
+  }
+  return {
+    negeri: Array.from(negeri).sort(),
+    tahun: Array.from(tahun).sort((a, b) => yearKey(b) - yearKey(a)),
+    pilihanRaya: Array.from(pilihanRaya).sort(),
+  };
+}
 
 export default function KatalogPage() {
   return (
@@ -91,12 +217,14 @@ function KatalogContent() {
     setApiPage(1);
   }, []);
 
-  // Fetch from API when tab has sheetSlug
+  // Fetch from static JSON (or fall back to legacy API for unmigrated sheets)
   useEffect(() => {
     if (!tab.sheetSlug) {
       setApiData([]);
       setApiColumns([]);
       setApiTotal(0);
+      setApiTotalPages(0);
+      setApiFilterOptions({});
       setApiLoading(false);
       setApiError(null);
       return;
@@ -106,6 +234,76 @@ function KatalogContent() {
     setApiLoading(true);
     setApiError(null);
 
+    const catalogSlug = CATALOG_SLUG_MAP[tab.sheetSlug];
+
+    if (catalogSlug) {
+      // New path: static JSON + client-side filter/pagination
+      getCatalogData(catalogSlug)
+        .then((raw) => {
+          if (controller.signal.aborted) return;
+          let rows = raw as Row[];
+          if (catalogSlug === "bil-pemerhati") rows = pivotPemerhati(rows);
+
+          // Apply tab-level extra params + user filters
+          const baseQuery: KatalogQuery = {
+            jenisCalon: tab.apiExtraParams?.jenisCalon,
+            statusCalon: tab.apiExtraParams?.statusCalon,
+          };
+          // Filter options come from rows after extra-param scoping but before user filters,
+          // so dropdowns reflect what's actually selectable for this tab.
+          const baseRows = filterRows(rows, baseQuery);
+          const filterOpts = extractFilterOptions(baseRows);
+
+          let filtered = filterRows(baseRows, {
+            negeri: filters.negeri,
+            tahun: filters.tahun,
+            pilihanRaya: filters.pilihanRaya,
+          });
+
+          // Sort by year desc when a year column is present
+          const sample = filtered[0] || baseRows[0];
+          if (sample) {
+            const yearCol = ["TAHUN PILIHAN RAYA", "TAHUN", "Tahun", "TahunPilihanraya"]
+              .find((c) => c in sample);
+            if (yearCol) {
+              filtered = [...filtered].sort(
+                (a, b) => yearKey(b[yearCol]) - yearKey(a[yearCol])
+              );
+            }
+          }
+
+          const total = filtered.length;
+          const totalPages = Math.max(1, Math.ceil(total / apiLimit));
+          const start = (apiPage - 1) * apiLimit;
+          const pageRows = filtered.slice(start, start + apiLimit);
+          const columns = pageRows[0]
+            ? Object.keys(pageRows[0])
+            : filtered[0]
+            ? Object.keys(filtered[0])
+            : baseRows[0]
+            ? Object.keys(baseRows[0])
+            : [];
+
+          setApiData(pageRows);
+          setApiColumns(columns);
+          setApiTotal(total);
+          setApiTotalPages(totalPages);
+          setApiFilterOptions(filterOpts);
+        })
+        .catch((err) => {
+          if (controller.signal.aborted) return;
+          setApiError(err instanceof Error ? err.message : "Failed to load");
+          setApiData([]);
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setApiLoading(false);
+        });
+
+      return () => controller.abort();
+    }
+
+    // Legacy fallback: oversized sheets (daftar-pemilih, undi-pos) still go
+    // through /api/katalog where pagination + aggregation happens server-side.
     const params = new URLSearchParams();
     params.set("sheet", tab.sheetSlug);
     params.set("page", String(apiPage));
@@ -113,8 +311,6 @@ function KatalogContent() {
     if (filters.negeri) params.set("negeri", filters.negeri);
     if (filters.tahun) params.set("tahun", filters.tahun);
     if (filters.pilihanRaya) params.set("pilihanRaya", filters.pilihanRaya);
-
-    // Add extra params from tab config (e.g. jenisCalon, statusCalon)
     if (tab.apiExtraParams) {
       Object.entries(tab.apiExtraParams).forEach(([k, v]) => params.set(k, v));
     }

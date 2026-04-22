@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from "chart.js";
+import { getCatalogData } from "@/lib/catalog";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -21,9 +22,8 @@ export default function PemantauanOperasi() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/katalog?sheet=kesalahan&limit=5000")
-      .then((r) => r.json())
-      .then((j) => setData(j.data || []))
+    getCatalogData("bil-kesalahan-pr")
+      .then((rows) => setData(rows as Row[]))
       .catch(() => setData([]))
       .finally(() => setLoading(false));
   }, []);

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip } from "chart.js";
+import { getCatalogData } from "@/lib/catalog";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
@@ -18,9 +19,8 @@ export default function PersempadananDashboard() {
   const [page, setPage] = useState(1);
 
   useEffect(() => {
-    fetch("/api/katalog?sheet=pusat-mengundi&limit=5000")
-      .then((r) => r.json())
-      .then((j) => setData(j.data || []))
+    getCatalogData("bil-pm-ppc-ppru")
+      .then((rows) => setData(rows as Row[]))
       .catch(() => setData([]))
       .finally(() => setLoading(false));
   }, []);

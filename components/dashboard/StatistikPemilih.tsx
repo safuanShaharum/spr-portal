@@ -1,5 +1,15 @@
 "use client";
 
+// TODO: Migrate to getCatalogData('daftar-pemilih-induk-2008-2025') once
+// chunking is implemented. The raw JSON is ~42 MB (107k rows) — loading the
+// whole file into the browser to aggregate by year+negeri will freeze low-end
+// devices. Plan: in scripts/convert-excel.mjs, partition oversized sheets by
+// TAHUN into public/data/daftar-pemilih-induk-2008-2025/{year}.json plus a
+// _manifest.json; add getCatalogPartition(slug, key) to lib/catalog.ts; this
+// component then loads only the selected year(s) on demand.
+// Until then, this component continues to use /api/katalog which streams
+// server-paginated rows.
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {

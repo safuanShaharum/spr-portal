@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip } from "chart.js";
+import { getCatalogData } from "@/lib/catalog";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
@@ -10,6 +11,33 @@ type Row = Record<string, unknown>;
 const toNum = (v: unknown) => { const n = parseInt(String(v || "0"), 10); return isNaN(n) ? 0 : n; };
 const fmtNum = (n: number) => n >= 1e6 ? (n / 1e6).toFixed(1) + "J" : n >= 1000 ? (n / 1000).toFixed(1) + "K" : String(n);
 const truncate = (s: string, max: number) => s.length > max ? s.slice(0, max) + "..." : s;
+
+// The raw `bil-pemerhati` sheet has organisation names as columns (one cell per
+// org per row). UI consumes one record per (kawasan, organisasi). Mirrors the
+// pivot previously done by /api/katalog for sheet=pemerhati.
+const PEMERHATI_META_COLS = new Set([
+  "TAHUN PILIHAN RAYA", "PILIHAN RAYA", "NEGERI", "PARLIMEN", "DUN",
+]);
+
+function pivotPemerhati(rows: Row[]): Row[] {
+  const out: Row[] = [];
+  for (const row of rows) {
+    for (const [key, val] of Object.entries(row)) {
+      if (PEMERHATI_META_COLS.has(key)) continue;
+      const num = Number(val);
+      if (!isNaN(num) && num > 0) {
+        out.push({
+          "PILIHAN RAYA": row["PILIHAN RAYA"] || "",
+          NEGERI: row["NEGERI"] || "",
+          PARLIMEN: row["PARLIMEN"] || "",
+          ORGANISASI: key,
+          "BILANGAN PEMERHATI": num,
+        });
+      }
+    }
+  }
+  return out;
+}
 
 export default function Pemerhati() {
   const [data, setData] = useState<Row[]>([]);
@@ -21,11 +49,11 @@ export default function Pemerhati() {
   const PER_PAGE = 20;
 
   useEffect(() => {
-    fetch("/api/katalog?sheet=pemerhati&limit=50000")
-      .then((r) => r.json())
-      .then((j) => {
-        const rows = (j.data || []).filter((r: Row) => toNum(r["BILANGAN PEMERHATI"]) > 0);
-        setData(rows);
+    getCatalogData("bil-pemerhati")
+      .then((raw) => {
+        const pivoted = pivotPemerhati(raw as Row[]);
+        // Pivot already drops zero/empty cells, but keep the > 0 filter for parity.
+        setData(pivoted.filter((r) => toNum(r["BILANGAN PEMERHATI"]) > 0));
       })
       .catch(() => setData([]))
       .finally(() => setLoading(false));

@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
+import useSWR from "swr";
 import { PARTI_COLORS } from "@/lib/katalog-data";
 import { getPartiLogo } from "@/lib/parti-logo";
+import { getCatalogData } from "@/lib/catalog";
+import type { CatalogData } from "@/types/catalog";
 
 interface Candidate {
   nama: string;
@@ -19,16 +22,18 @@ interface Props {
   onClose: () => void;
 }
 
-export default function ElectionModal({ row, sheetSlug, onClose }: Props) {
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [undiDitolak, setUndiDitolak] = useState(0);
-  const [pemilihBerdaftar, setPemilihBerdaftar] = useState(0);
+// Parent components still pass the legacy /api/katalog sheet keys; map them to
+// the catalog JSON slugs published by the build-time converter.
+const SLUG_MAP: Record<string, string> = {
+  "keputusan-pru": "keputusan-pru",
+  "keputusan-dun": "keputusan-pru-dun",
+  "keputusan-prk": "keputusan-prk",
+};
 
+export default function ElectionModal({ row, sheetSlug, onClose }: Props) {
   // ---- Determine context from sheetSlug ----
   const isPRK = sheetSlug === "keputusan-prk";
   const isDUN = sheetSlug === "keputusan-dun";
-  // keputusan-pru with JenisCalon filters is Parlimen
 
   // ---- Build display values from clicked row ----
   const kawasan = isDUN
@@ -42,84 +47,86 @@ export default function ElectionModal({ row, sheetSlug, onClose }: Props) {
 
   const jenis = isPRK ? "PRK" : isDUN ? "DUN" : "PARLIMEN";
 
-  // ---- Fetch all candidates for this kawasan ----
-  useEffect(() => {
-    if (!sheetSlug || !kawasan) {
-      setLoading(false);
-      return;
+  // ---- Fetch full sheet via SWR (cached across modal opens for the session) ----
+  const catalogSlug = sheetSlug ? SLUG_MAP[sheetSlug] : undefined;
+  const { data: allRows, isLoading } = useSWR<CatalogData>(
+    catalogSlug ?? null,
+    (slug: string) => getCatalogData(slug)
+  );
+
+  // ---- Filter to the candidates for this kawasan / event ----
+  const { candidates, undiDitolak, pemilihBerdaftar } = useMemo(() => {
+    if (!allRows || !kawasan) {
+      return { candidates: [] as Candidate[], undiDitolak: 0, pemilihBerdaftar: 0 };
     }
 
-    const params = new URLSearchParams();
-    params.set("sheet", sheetSlug);
-    params.set("limit", "50");
+    let rows = allRows.filter((r) => {
+      const v = isDUN
+        ? String(r["DEWAN UNDANGAN NEGERI"] || "")
+        : String(r["PARLIMEN"] || "");
+      return v === kawasan;
+    });
 
-    // Filter by the correct kawasan column
-    params.set("kawasan", kawasan);
-    params.set("kawasanType", isDUN ? "dun" : "parlimen");
-
-    // For PRU Parlimen (keputusan-pru), also filter JenisCalon to exclude DUN rows
     if (sheetSlug === "keputusan-pru") {
-      params.set("jenisCalon", "Parlimen");
+      rows = rows.filter((r) => String(r["JenisCalon"] || "").toLowerCase() === "parlimen");
     }
 
-    // Filter by same tahun to get exact election event
-    if (tahun) params.set("tahun", tahun);
-
-    fetch(`/api/katalog?${params.toString()}`)
-      .then((r) => r.json())
-      .then((json) => {
-        const rows: Record<string, unknown>[] = json.data || [];
-
-        // For PRK, further filter to exact NamaPR (same PRK event)
-        let eventRows = rows;
-        if (isPRK && namaPR) {
-          eventRows = rows.filter(
-            (r) => String(r["NamaPR"] || r["PILIHAN RAYA"] || "") === namaPR
-          );
-          if (eventRows.length === 0) eventRows = rows; // fallback
+    if (tahun) {
+      rows = rows.filter((r) => {
+        for (const col of ["TAHUN PILIHAN RAYA", "TAHUN", "Tahun", "TahunPilihanraya"]) {
+          const val = String(r[col] || "");
+          if (val && val.includes(tahun)) return true;
         }
+        return false;
+      });
+    }
 
-        // Extract stats from winner row
-        const winnerRow = eventRows.find((r) => {
-          const s = String(r["StatusCalon"] || r["STATUS"] || "").toUpperCase();
-          return s === "MNG" || s === "MENANG";
-        });
+    let eventRows = rows;
+    if (isPRK && namaPR) {
+      const filtered = rows.filter(
+        (r) => String(r["NamaPR"] || r["PILIHAN RAYA"] || "") === namaPR
+      );
+      if (filtered.length > 0) eventRows = filtered;
+    }
 
-        const pemilih = Number(winnerRow?.["JumlahPemilih"] || 0);
-        setPemilihBerdaftar(isNaN(pemilih) ? 0 : pemilih);
+    eventRows = eventRows.slice(0, 50);
 
-        const ditolak = Number(winnerRow?.["UNDI DITOLAK"] || 0);
-        setUndiDitolak(isNaN(ditolak) ? 0 : ditolak);
+    const winnerRow = eventRows.find((r) => {
+      const s = String(r["StatusCalon"] || r["STATUS"] || "").toUpperCase();
+      return s === "MNG" || s === "MENANG";
+    });
 
-        // Map candidates
-        const mapped: Candidate[] = eventRows.map((r) => {
-          const status = String(r["StatusCalon"] || r["STATUS"] || "").toUpperCase();
-          return {
-            nama: String(r["NAMA ATAS KERTAS UNDI"] || r["NAMA KERTAS UNDI"] || r["NAMA PENUH CALON"] || ""),
-            parti: String(r["SINGKATAN NAMA PARTI BERTANDING"] || ""),
-            parti_penuh: String(r["NAMA PARTI BERTANDING"] || ""),
-            undi: Number(r["BILANGAN UNDI"]) || 0,
-            peratusan: 0,
-            isWinner: status === "MNG" || status === "MENANG",
-          };
-        });
+    const pemilih = Number(winnerRow?.["JumlahPemilih"] || 0);
+    const ditolak = Number(winnerRow?.["UNDI DITOLAK"] || 0);
 
-        // Calculate percentage from actual vote totals
-        const totalVotes = mapped.reduce((s, c) => s + c.undi, 0);
-        for (const c of mapped) {
-          c.peratusan = totalVotes > 0
-            ? parseFloat(((c.undi / totalVotes) * 100).toFixed(1))
-            : 0;
-        }
+    const mapped: Candidate[] = eventRows.map((r) => {
+      const status = String(r["StatusCalon"] || r["STATUS"] || "").toUpperCase();
+      return {
+        nama: String(r["NAMA ATAS KERTAS UNDI"] || r["NAMA KERTAS UNDI"] || r["NAMA PENUH CALON"] || ""),
+        parti: String(r["SINGKATAN NAMA PARTI BERTANDING"] || ""),
+        parti_penuh: String(r["NAMA PARTI BERTANDING"] || ""),
+        undi: Number(r["BILANGAN UNDI"]) || 0,
+        peratusan: 0,
+        isWinner: status === "MNG" || status === "MENANG",
+      };
+    });
 
-        // Sort by undi descending (winner naturally on top)
-        mapped.sort((a, b) => b.undi - a.undi);
+    const totalVotes = mapped.reduce((s, c) => s + c.undi, 0);
+    for (const c of mapped) {
+      c.peratusan = totalVotes > 0
+        ? parseFloat(((c.undi / totalVotes) * 100).toFixed(1))
+        : 0;
+    }
+    mapped.sort((a, b) => b.undi - a.undi);
 
-        setCandidates(mapped);
-      })
-      .catch(() => setCandidates([]))
-      .finally(() => setLoading(false));
-  }, [kawasan, sheetSlug, tahun, isDUN, isPRK, namaPR]);
+    return {
+      candidates: mapped,
+      undiDitolak: isNaN(ditolak) ? 0 : ditolak,
+      pemilihBerdaftar: isNaN(pemilih) ? 0 : pemilih,
+    };
+  }, [allRows, kawasan, sheetSlug, tahun, isDUN, isPRK, namaPR]);
+
+  const loading = catalogSlug ? isLoading : false;
 
   // ---- Derived stats ----
   const winner = candidates.find((c) => c.isWinner);

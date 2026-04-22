@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { getCatalogData } from "@/lib/catalog";
 import { COALITION_COLORS, PRU_INFO } from "@/lib/parti-colors";
 import InfoCard from "./InfoCard";
 import NegeriTable, { NegeriRow } from "./NegeriTable";
@@ -29,10 +30,9 @@ export default function KeputusanPRU() {
 
   // Fetch ALL keputusan-pru data at once (no server-side tahun filter)
   useEffect(() => {
-    fetch("/api/katalog?sheet=keputusan-pru&limit=10000")
-      .then((r) => r.json())
-      .then((json) => {
-        const data: Row[] = json.data || [];
+    getCatalogData("keputusan-pru")
+      .then((rows) => {
+        const data = rows as Row[];
         setAllData(data);
         console.log("[Dashboard] Total rows fetched:", data.length);
       })

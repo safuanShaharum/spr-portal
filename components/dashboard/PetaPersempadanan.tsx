@@ -9,6 +9,7 @@ import { kml } from "@mapbox/togeojson";
 import { NEGERI_LIST } from "@/lib/constants";
 import { COALITION_COLORS } from "@/lib/parti-colors";
 import { getPartiLogo } from "@/lib/parti-logo";
+import { getCatalogData } from "@/lib/catalog";
 import type { Feature, FeatureCollection } from "geojson";
 
 const EMPTY_FC: FeatureCollection = { type: "FeatureCollection", features: [] };
@@ -76,11 +77,11 @@ export default function PetaPersempadanan() {
     (async () => {
       try {
         setLoading(true);
-        const [kmzRes, dataRes, dunDataRes, prkDataRes] = await Promise.all([
+        const [kmzRes, pruRowsRes, dunRowsRes, prkRowsRes] = await Promise.all([
           fetch("/api/proxy-file?dataset_id=11"),
-          fetch("/api/katalog?sheet=keputusan-pru&limit=50000"),
-          fetch("/api/katalog?sheet=keputusan-dun&limit=50000"),
-          fetch("/api/katalog?sheet=keputusan-prk&limit=5000"),
+          getCatalogData("keputusan-pru"),
+          getCatalogData("keputusan-pru-dun"),
+          getCatalogData("keputusan-prk"),
         ]);
         if (!kmzRes.ok) throw new Error("Gagal memuat turun KMZ");
 
@@ -102,9 +103,9 @@ export default function PetaPersempadanan() {
         setParlimenData({ type: "FeatureCollection", features: parlimen });
         setDunData({ type: "FeatureCollection", features: dun });
 
-        const dj = await dataRes.json(); setPruRows(dj.data || []);
-        const ddj = await dunDataRes.json(); setDunRows(ddj.data || []);
-        const pj = await prkDataRes.json(); setPrkRows(pj.data || []);
+        setPruRows(pruRowsRes as Row[]);
+        setDunRows(dunRowsRes as Row[]);
+        setPrkRows(prkRowsRes as Row[]);
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : "Gagal");
       } finally {

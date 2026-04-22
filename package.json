@@ -2,11 +2,16 @@
   "name": "spr-portal",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.6"
+  },
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node --env-file-if-exists=.env.local scripts/convert-excel.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "convert-data": "node --env-file-if-exists=.env.local scripts/convert-excel.mjs"
   },
   "dependencies": {
     "@mapbox/togeojson": "^0.16.2",

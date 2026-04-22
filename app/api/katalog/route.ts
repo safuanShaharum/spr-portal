@@ -7,25 +7,14 @@ const WP_API = process.env.NEXT_PUBLIC_WP_API_URL || "http://spr-open-data.local
 /*  Sheet slug → Excel sheet name mapping                              */
 /* ------------------------------------------------------------------ */
 
+// Most sheets have moved to pre-converted JSON in /public/data/. Only
+// oversized sheets remain here pending the chunking strategy:
+//   · daftar-pemilih (~107k rows / 42 MB raw JSON)
+//   · undi-pos (~100k rows; this route also performs server-side aggregation)
+// All other catalog consumers now call lib/catalog.ts → /data/{slug}.json.
 const SHEET_MAP: Record<string, string> = {
-  "keputusan-pru": "Keputusan PRU",
-  "keputusan-dun": "Keputusan PRU DUN",
-  "keputusan-prk": "Keputusan PRK",
   "undi-pos": "Statistik Undi Pos",
-  "pengundi-awal": "Statistik Pengundi Awal",
-  "penyata-belanja": "test Penyata Belanja Calon PR",
-  "petugas": "Statistik Petugas",
-  "notis-warta": "Notis Warta Belanja PR",
-  "maklumat-calon": "Maklumat Calon PR",
   "daftar-pemilih": "Daftar Pemilih Induk 2008-2025",
-  "dppr": "DPPR PRU PRN PRK 2008 & KEATAS",
-  "senarai-bpr": "SENARAI BPR",
-  "pusat-mengundi": "BIL. PM, PPC, PPRU",
-  "petisyen": "BIL. PETISYEN",
-  "bajet": "BAJET PR",
-  "kesalahan": "BIL. KESALAHAN PR ",
-  "pemerhati": "BIL. PEMERHATI",
-  "program-ve": "BIL. PROGRAM VE",
 };
 
 /* ------------------------------------------------------------------ */
@@ -94,7 +83,7 @@ function parseSheet(workbook: XLSX.WorkBook, sheetName: string): Record<string, 
   const normalized = jsonData.map((row) => {
     const clean: Record<string, unknown> = {};
     for (const [key, val] of Object.entries(row)) {
-      clean[key.replace(/\n/g, " ").trim()] = val;
+      clean[key.replace(/\s+/g, " ").trim()] = val;
     }
     return clean;
   });
@@ -182,28 +171,6 @@ export async function GET(req: NextRequest) {
         "KAT. 1C": g.c,
         "JUMLAH": g.a + g.b + g.c,
       }));
-    }
-
-    // --- Pivot pemerhati ---
-    if (sheetSlug === "pemerhati") {
-      const metaCols = ["TAHUN PILIHAN RAYA", "PILIHAN RAYA", "NEGERI", "PARLIMEN", "DUN"];
-      const pivoted: Record<string, unknown>[] = [];
-      for (const row of rows) {
-        for (const [key, val] of Object.entries(row)) {
-          if (metaCols.includes(key)) continue;
-          const num = Number(val);
-          if (!isNaN(num) && num > 0) {
-            pivoted.push({
-              "PILIHAN RAYA": row["PILIHAN RAYA"] || "",
-              NEGERI: row["NEGERI"] || "",
-              PARLIMEN: row["PARLIMEN"] || "",
-              ORGANISASI: key,
-              "BILANGAN PEMERHATI": num,
-            });
-          }
-        }
-      }
-      rows = pivoted;
     }
 
     // Extract columns after all transformations
