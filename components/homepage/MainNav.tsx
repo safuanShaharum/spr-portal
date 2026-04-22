@@ -123,9 +123,6 @@ export function MainNav({ overlay }: MainNavProps = {}) {
                 className="bg-transparent outline-none placeholder:text-white/60 w-44 lg:w-56"
               />
             </form>
-            <button className="px-4 py-2.5 bg-spr-gold text-spr-ink rounded-full text-sm font-semibold hover:bg-amber-400 transition shadow-lg shadow-amber-500/20">
-              MS / EN
-            </button>
           </div>
 
           {/* Mobile hamburger */}
@@ -226,16 +223,6 @@ export function MainNav({ overlay }: MainNavProps = {}) {
               ))}
             </ul>
           </nav>
-
-          {/* Footer / language toggle */}
-          <div className="px-5 py-5 border-t border-white/10">
-            <button
-              type="button"
-              className="w-full px-4 py-3 bg-spr-gold text-spr-ink rounded-full text-sm font-semibold hover:bg-amber-400 transition"
-            >
-              MS / EN
-            </button>
-          </div>
         </aside>
       </div>
     </>
