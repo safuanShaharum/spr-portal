@@ -20,11 +20,11 @@ const FALLBACK: KemaskiniItem[] = [
   },
 ];
 
-const API_BASE = process.env.NEXT_PUBLIC_WORDPRESS_API_URL || 'http://spr-open-data.local';
+const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || 'http://spr-open-data.local/wp-json').replace(/\/$/, '');
 
 export async function getKemaskini(perPage = 4): Promise<KemaskiniItem[]> {
   try {
-    const res = await fetch(`${API_BASE}/wp-json/spr/v1/kemaskini?per_page=${perPage}`, {
+    const res = await fetch(`${WP_API}/spr/v1/kemaskini?per_page=${perPage}`, {
       next: { revalidate: 300 },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
