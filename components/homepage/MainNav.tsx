@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
 
@@ -16,12 +17,14 @@ export function MainNav() {
       <div className="w-full px-4 sm:px-6 lg:px-10 py-5 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-spr-purple-dark font-serif font-bold text-lg shadow-lg group-hover:scale-105 transition-transform">
-            <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="currentColor"/>
-              <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-          </div>
+          <Image
+            src="/images/LOGO_JATA.png"
+            alt="Jata Negara"
+            width={62}
+            height={48}
+            priority
+            className="h-12 w-auto object-contain group-hover:scale-105 transition-transform"
+          />
           <div className="text-white">
             <div className="text-[11px] uppercase tracking-[0.2em] opacity-70 font-medium">Portal Rasmi</div>
             <div className="font-serif text-lg font-semibold leading-tight">Suruhanjaya Pilihan Raya</div>

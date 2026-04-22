@@ -16,8 +16,6 @@ const CATEGORY_CHIPS = [
 export function Hero() {
   return (
     <section className="hero-bg relative min-h-[840px] pt-48 pb-32 overflow-hidden">
-      <div className="kl-silhouette" />
-
       {/* Decorative circles */}
       <div className="absolute top-32 right-[8%] w-64 h-64 opacity-[0.08] pointer-events-none">
         <svg viewBox="0 0 200 200" className="w-full h-full text-white">
