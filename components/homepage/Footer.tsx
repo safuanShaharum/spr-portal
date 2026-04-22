@@ -127,7 +127,6 @@ export function Footer() {
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
               Sistem beroperasi normal
             </span>
-            <span className="text-white/50 font-mono">v2.0.0</span>
           </div>
         </div>
       </div>

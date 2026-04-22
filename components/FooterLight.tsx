@@ -122,7 +122,6 @@ export default function FooterLight() {
           <p className="text-white/40 text-xs">
             © {new Date().getFullYear()} Suruhanjaya Pilihan Raya Malaysia. Hak cipta terpelihara.
           </p>
-          <p className="text-white/30 text-xs font-mono">v2.0.0</p>
         </div>
       </div>
     </footer>
