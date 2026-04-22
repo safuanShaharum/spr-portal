@@ -208,4 +208,8 @@ body {
     aspect-ratio: 1 / 1;
     background: linear-gradient(135deg, #FAF6F0 0%, #F0EAFD 100%);
   }
+
+  /* Hide horizontal scrollbar on touch carousels (year pills, etc.) */
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
 }

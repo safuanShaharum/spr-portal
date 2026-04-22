@@ -6,6 +6,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import JSZip from "jszip";
 import { kml } from "@mapbox/togeojson";
+import { SlidersHorizontal, X } from "lucide-react";
 import { NEGERI_LIST } from "@/lib/constants";
 import { COALITION_COLORS } from "@/lib/parti-colors";
 import { getPartiLogo } from "@/lib/parti-logo";
@@ -41,9 +42,21 @@ const DUN_YEARS = [
   { value: "2008", label: "PRU 2008" },
 ];
 
+// Mobile devices get a tighter view focused on Peninsular Malaysia at first
+// load — fitting the full country including Borneo on a narrow viewport zooms
+// out too far and makes individual kawasan boundaries unreadable. Users can
+// pan/zoom to East Malaysia from there.
+const FULL_BOUNDS: L.LatLngBoundsLiteral = [[0.8, 99.5], [7.5, 119.5]];
+const PENINSULAR_BOUNDS: L.LatLngBoundsLiteral = [[1.0, 99.4], [6.8, 105.0]];
+
 function FitMalaysia({ onReady }: { onReady: (map: L.Map) => void }) {
   const map = useMap();
-  useEffect(() => { onReady(map); map.fitBounds([[0.8, 99.5], [7.5, 119.5]], { padding: [20, 20] }); }, [map, onReady]);
+  useEffect(() => {
+    onReady(map);
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    const bounds = isMobile ? PENINSULAR_BOUNDS : FULL_BOUNDS;
+    map.fitBounds(bounds, { padding: [20, 20] });
+  }, [map, onReady]);
   return null;
 }
 
@@ -69,6 +82,7 @@ export default function PetaPersempadanan() {
   const [layer, setLayer] = useState<"parlimen" | "dun">("parlimen");
   const [selectedYear, setSelectedYear] = useState("2022");
   const [selectedNegeri, setSelectedNegeri] = useState("");
+  const [controlsOpen, setControlsOpen] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
 
   // Load KMZ + all data once
@@ -256,6 +270,56 @@ export default function PetaPersempadanan() {
 
   const geoKey = `${layer}-${selectedYear}-${selectedNegeri}-${winnerMap.size}`;
 
+  // --- Reusable control cards (rendered in desktop sidebar AND mobile bottom sheet) ---
+  const renderLayerCard = () => (
+    <div className="bg-white border border-spr-border rounded-xl p-3 shadow-lg">
+      <div className="text-[10px] font-semibold text-spr-text-muted uppercase tracking-wider mb-2">Paparan Layer</div>
+      <div className="flex gap-1">
+        {(["parlimen", "dun"] as const).map((l) => (
+          <button key={l} onClick={() => handleLayerChange(l)}
+            className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${layer === l ? "bg-spr-primary text-white" : "bg-spr-bg-secondary text-spr-text-secondary"}`}>
+            {l === "parlimen" ? "Parlimen" : "DUN"}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderNegeriCard = () => (
+    <div className="bg-white border border-spr-border rounded-xl p-3 shadow-lg">
+      <div className="text-[10px] font-semibold text-spr-text-muted uppercase tracking-wider mb-2">Tapis Negeri</div>
+      <select value={selectedNegeri} onChange={(e) => setSelectedNegeri(e.target.value)}
+        className="w-full bg-spr-bg-secondary border border-spr-border rounded-lg px-2.5 py-2 text-xs text-spr-text outline-none cursor-pointer">
+        <option value="">Semua Negeri</option>
+        {NEGERI_LIST.map((n) => <option key={n.slug} value={n.slug}>{n.name}</option>)}
+      </select>
+    </div>
+  );
+
+  const renderLegendCard = () => (
+    <div className="bg-white border border-spr-border rounded-xl p-3 shadow-lg">
+      <div className="text-[10px] font-semibold text-spr-text-muted uppercase tracking-wider mb-2">Legenda</div>
+      <div className="space-y-1.5">
+        {LEGEND_ITEMS.map((item) => {
+          const coalName = item.label.split(" ")[0];
+          const logo = getPartiLogo(coalName);
+          return (
+            <div key={item.label} className="flex items-center gap-2">
+              {item.label.includes("Ditangguhkan") ? (
+                <div className="w-3 h-3 rounded-sm shrink-0" style={{ border: "1.5px dashed #9CA3AF", backgroundColor: "transparent", backgroundImage: "repeating-linear-gradient(45deg, #D1D5DB 0, #D1D5DB 1px, transparent 1px, transparent 3px)" }} />
+              ) : logo ? (
+                <img src={logo} alt={coalName} width={16} height={16} className="object-contain rounded-sm shrink-0" />
+              ) : (
+                <div className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: item.color }} />
+              )}
+              <span className="text-[11px] text-spr-text-secondary">{item.label}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   if (loading) return (
     <div className="flex items-center justify-center bg-spr-bg-secondary rounded-xl" style={{ height: "calc(100vh - 300px)" }}>
       <div className="text-center">
@@ -284,12 +348,12 @@ export default function PetaPersempadanan() {
         <FitMalaysia onReady={(m) => { mapRef.current = m; }} />
       </MapContainer>
 
-      {/* Year pills — top center */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000]">
-        <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm border border-spr-border rounded-full px-2 py-1.5 shadow-lg">
+      {/* Year pills — top center (horizontal scroll on mobile) */}
+      <div className="absolute top-4 left-4 right-16 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-[1000]">
+        <div className="flex items-center gap-1.5 bg-white/95 backdrop-blur-sm border border-spr-border rounded-full px-2 py-1.5 shadow-lg overflow-x-auto no-scrollbar">
           {yearOptions.map((y) => (
             <button key={y.value} onClick={() => setSelectedYear(y.value)}
-              className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition-all ${
+              className={`shrink-0 px-3 py-1.5 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
                 selectedYear === y.value
                   ? "bg-[#E8740C] text-white"
                   : "text-spr-text-secondary hover:text-[#E8740C]"
@@ -300,48 +364,21 @@ export default function PetaPersempadanan() {
         </div>
       </div>
 
-      {/* Sidebar controls — top left */}
-      <div className="absolute top-16 left-4 z-[1000] w-[220px] space-y-3">
-        <div className="bg-white border border-spr-border rounded-xl p-3 shadow-lg">
-          <div className="text-[10px] font-semibold text-spr-text-muted uppercase tracking-wider mb-2">Paparan Layer</div>
-          <div className="flex gap-1">
-            {(["parlimen", "dun"] as const).map((l) => (
-              <button key={l} onClick={() => handleLayerChange(l)}
-                className={`flex-1 py-1.5 rounded-lg text-xs font-semibold transition-all ${layer === l ? "bg-spr-primary text-white" : "bg-spr-bg-secondary text-spr-text-secondary"}`}>
-                {l === "parlimen" ? "Parlimen" : "DUN"}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="bg-white border border-spr-border rounded-xl p-3 shadow-lg">
-          <div className="text-[10px] font-semibold text-spr-text-muted uppercase tracking-wider mb-2">Tapis Negeri</div>
-          <select value={selectedNegeri} onChange={(e) => setSelectedNegeri(e.target.value)}
-            className="w-full bg-spr-bg-secondary border border-spr-border rounded-lg px-2.5 py-1.5 text-xs text-spr-text outline-none cursor-pointer">
-            <option value="">Semua Negeri</option>
-            {NEGERI_LIST.map((n) => <option key={n.slug} value={n.slug}>{n.name}</option>)}
-          </select>
-        </div>
-        <div className="bg-white border border-spr-border rounded-xl p-3 shadow-lg">
-          <div className="text-[10px] font-semibold text-spr-text-muted uppercase tracking-wider mb-2">Legenda</div>
-          <div className="space-y-1.5">
-            {LEGEND_ITEMS.map((item) => {
-              const coalName = item.label.split(" ")[0]; // "PH", "PN", etc
-              const logo = getPartiLogo(coalName);
-              return (
-                <div key={item.label} className="flex items-center gap-2">
-                  {item.label.includes("Ditangguhkan") ? (
-                    <div className="w-3 h-3 rounded-sm shrink-0" style={{ border: "1.5px dashed #9CA3AF", backgroundColor: "transparent", backgroundImage: "repeating-linear-gradient(45deg, #D1D5DB 0, #D1D5DB 1px, transparent 1px, transparent 3px)" }} />
-                  ) : logo ? (
-                    <img src={logo} alt={coalName} width={16} height={16} className="object-contain rounded-sm shrink-0" />
-                  ) : (
-                    <div className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: item.color }} />
-                  )}
-                  <span className="text-[11px] text-spr-text-secondary">{item.label}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+      {/* Mobile: open-controls FAB (top-right) */}
+      <button
+        type="button"
+        onClick={() => setControlsOpen(true)}
+        aria-label="Buka tetapan peta"
+        className="md:hidden absolute top-4 right-4 z-[1000] w-11 h-11 rounded-full bg-white shadow-lg border border-spr-border flex items-center justify-center text-spr-primary"
+      >
+        <SlidersHorizontal className="w-5 h-5" />
+      </button>
+
+      {/* Desktop sidebar controls — top left, hidden on mobile */}
+      <div className="hidden md:block absolute top-16 left-4 z-[1000] w-[220px] space-y-3">
+        {renderLayerCard()}
+        {renderNegeriCard()}
+        {renderLegendCard()}
       </div>
 
       {/* Footer label */}
@@ -349,6 +386,44 @@ export default function PetaPersempadanan() {
         <span className="text-xs text-spr-text-muted">
           Layer: {layer === "parlimen" ? "Parlimen" : "DUN"} — {yearLabel}
         </span>
+      </div>
+
+      {/* Mobile bottom sheet with all controls */}
+      <div
+        className={`md:hidden fixed inset-0 z-[1100] ${controlsOpen ? "pointer-events-auto" : "pointer-events-none"}`}
+        aria-hidden={!controlsOpen}
+      >
+        <div
+          onClick={() => setControlsOpen(false)}
+          className={`absolute inset-0 bg-black/50 transition-opacity duration-200 ${controlsOpen ? "opacity-100" : "opacity-0"}`}
+        />
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Tetapan peta"
+          className={`absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl max-h-[85vh] overflow-y-auto transform transition-transform duration-300 ${controlsOpen ? "translate-y-0" : "translate-y-full"}`}
+        >
+          {/* Drag handle */}
+          <div className="flex justify-center pt-3 pb-1">
+            <div className="w-10 h-1 rounded-full bg-spr-border" />
+          </div>
+          <div className="flex items-center justify-between px-5 pb-3">
+            <h3 className="font-display text-base font-semibold text-spr-navy">Tetapan Peta</h3>
+            <button
+              type="button"
+              onClick={() => setControlsOpen(false)}
+              aria-label="Tutup tetapan"
+              className="w-8 h-8 rounded-full bg-spr-bg-secondary flex items-center justify-center text-spr-text-muted hover:text-spr-text"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="px-5 pb-6 space-y-3">
+            {renderLayerCard()}
+            {renderNegeriCard()}
+            {renderLegendCard()}
+          </div>
+        </div>
       </div>
 
       <style jsx global>{`
