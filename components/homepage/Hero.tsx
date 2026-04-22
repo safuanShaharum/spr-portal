@@ -73,7 +73,7 @@ export function Hero() {
           className="glass rounded-2xl p-2 max-w-3xl mx-auto mb-14 reveal text-left"
           style={{ animationDelay: '0.5s', opacity: 0 }}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
             <div className="flex-1 flex items-center gap-3 px-5">
               <Search className="w-5 h-5 text-white/50" />
               <input
@@ -85,7 +85,10 @@ export function Hero() {
                 className="w-full bg-transparent text-white placeholder-white/50 py-4 text-base outline-none"
               />
             </div>
-            <button type="submit" className="bg-spr-gold text-spr-ink px-8 py-3.5 rounded-xl font-semibold hover:bg-amber-400 transition flex items-center gap-2 group">
+            <button
+              type="submit"
+              className="bg-spr-gold text-spr-ink w-full md:w-auto px-8 py-3.5 rounded-xl font-semibold hover:bg-amber-400 transition flex items-center justify-center gap-2 group"
+            >
               <span>Cari Data</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
             </button>
