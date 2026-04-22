@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Playfair_Display, DM_Sans, Fraunces, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import NavbarLight from "@/components/NavbarLight";
+import { TopTicker } from "@/components/homepage/TopTicker";
+import { MainNav } from "@/components/homepage/MainNav";
 import FooterLight from "@/components/FooterLight";
 
 const playfairDisplay = Playfair_Display({
@@ -56,7 +57,8 @@ export default function RootLayout({
       <body
         className={`${playfairDisplay.variable} ${dmSans.variable} ${fraunces.variable} ${interTight.variable} ${jetbrainsMono.variable} font-body antialiased bg-white text-spr-text`}
       >
-        <NavbarLight />
+        <TopTicker />
+        <MainNav />
         <main>{children}</main>
         <FooterLight />
       </body>

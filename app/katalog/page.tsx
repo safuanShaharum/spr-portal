@@ -1,7 +1,6 @@
 "use client";
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { BAHAGIAN_LIST, ColumnDef } from "@/lib/katalog-data";
 import Sidebar from "@/components/katalog/Sidebar";
@@ -14,6 +13,7 @@ import EmptyState from "@/components/katalog/EmptyState";
 import ElectionModal from "@/components/katalog/ElectionModal";
 import DetailModal from "@/components/katalog/DetailModal";
 import { getCatalogData } from "@/lib/catalog";
+import { PageHeader } from "@/components/PageHeader";
 
 type Row = Record<string, unknown>;
 
@@ -367,22 +367,15 @@ function KatalogContent() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="bg-spr-bg-secondary py-6 sm:py-8 px-4 sm:px-6 lg:px-10">
-        <div>
-          <nav className="flex items-center gap-2 text-[13px] text-spr-text-muted mb-3">
-            <Link href="/" className="hover:text-spr-primary transition-colors">Utama</Link>
-            <span>/</span>
-            <span className="text-spr-text">Katalog Data</span>
-            <span>/</span>
-            <span className="text-spr-navy font-medium truncate">{bahagian.label}</span>
-          </nav>
-          <h1 className="font-display text-[28px] sm:text-[32px] font-bold text-spr-navy">{bahagian.label}</h1>
-          <p className="text-spr-text-secondary mt-1 text-sm">
-            {bahagian.count} set data tersedia dalam bahagian ini
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        breadcrumb={[
+          { label: "Utama", href: "/" },
+          { label: "Katalog Data", href: "/katalog" },
+          { label: bahagian.label },
+        ]}
+        title={bahagian.label}
+        subtitle={`${bahagian.count} set data tersedia dalam bahagian ini`}
+      />
 
       <div className="px-4 sm:px-6 lg:px-10 py-6">
         {/* Mobile bahagian selector — OUTSIDE flex container */}

@@ -1,5 +1,3 @@
-import { TopTicker } from '@/components/homepage/TopTicker';
-import { MainNav } from '@/components/homepage/MainNav';
 import { Hero } from '@/components/homepage/Hero';
 import { FactTicker } from '@/components/homepage/FactTicker';
 import { StorytellingCarousel } from '@/components/homepage/StorytellingCarousel';
@@ -11,12 +9,8 @@ import { PautanServisSPR } from '@/components/homepage/PautanServisSPR';
 
 export default function HomePage() {
   return (
-    <main className="relative">
-      <TopTicker />
-      <div className="relative">
-        <MainNav />
-        <Hero />
-      </div>
+    <div className="relative">
+      <Hero />
       <FactTicker />
       <StorytellingCarousel />
       <CategoryCards />
@@ -24,6 +18,6 @@ export default function HomePage() {
       <DataDalamAngka />
       <TerkiniPortal />
       <PautanServisSPR />
-    </main>
+    </div>
   );
 }

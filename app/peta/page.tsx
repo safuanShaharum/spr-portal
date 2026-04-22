@@ -12,7 +12,7 @@ const InteractiveMap = dynamic(() => import("@/components/InteractiveMap"), {
   loading: () => (
     <div
       className="flex items-center justify-center bg-spr-bg-secondary"
-      style={{ height: "calc(100vh - 96px)" }}
+      style={{ height: "calc(100vh - 124px)" }}
     >
       <div className="text-center">
         <div className="w-12 h-12 border-2 border-spr-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
@@ -24,7 +24,7 @@ const InteractiveMap = dynamic(() => import("@/components/InteractiveMap"), {
 
 export default function PetaPage() {
   return (
-    <div style={{ minHeight: "calc(100vh - 96px)" }}>
+    <div style={{ minHeight: "calc(100vh - 124px)" }}>
       <InteractiveMap />
     </div>
   );

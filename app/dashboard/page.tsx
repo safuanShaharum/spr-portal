@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { PageHeader } from "@/components/PageHeader";
+import { DASHBOARD_TABS } from "@/lib/dashboard-tabs";
 import KeputusanPRU from "@/components/dashboard/KeputusanPRU";
 import PartiPolitik from "@/components/dashboard/PartiPolitik";
 import StatistikPemilih from "@/components/dashboard/StatistikPemilih";
@@ -24,56 +26,40 @@ const PetaPersempadanan = dynamic(() => import("@/components/dashboard/PetaPerse
   ),
 });
 
-const TABS = [
-  { slug: "keputusan-pru", label: "Keputusan PRU" },
-  { slug: "statistik-pemilih", label: "Statistik Pemilih" },
-  { slug: "peta-persempadanan", label: "Peta Persempadanan" },
-  { slug: "parti-politik", label: "Parti Politik" },
-  { slug: "pemerhati", label: "Pemerhati" },
-  { slug: "akademi", label: "Akademi Pilihan Raya" },
-  { slug: "persempadanan", label: "Persempadanan" },
-  { slug: "perundangan", label: "Perundangan" },
-  { slug: "pemantauan", label: "Pemantauan & Operasi" },
-];
+const TABS = DASHBOARD_TABS;
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState("keputusan-pru");
+  return (
+    <Suspense fallback={null}>
+      <DashboardContent />
+    </Suspense>
+  );
+}
+
+function DashboardContent() {
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get("tab") || "keputusan-pru";
+  const [activeTab, setActiveTab] = useState(initialTab);
 
   const tab = TABS.find((t) => t.slug === activeTab) || TABS[0];
   const isMapTab = activeTab === "peta-persempadanan";
 
   return (
     <div>
-      {/* Header */}
-      <div className="bg-spr-bg-secondary py-6 sm:py-8 px-4 sm:px-6 lg:px-10">
-        <div>
-          <nav className="flex items-center gap-2 text-[13px] text-spr-text-muted mb-3">
-            <Link href="/" className="hover:text-spr-primary transition-colors">Utama</Link>
-            <span>/</span>
-            <span className="text-spr-text">Dashboard</span>
-            <span>/</span>
-            <span className="text-spr-navy font-medium truncate">{tab.label}</span>
-          </nav>
-          <h1 className="font-display text-[28px] sm:text-[32px] font-bold text-spr-navy mb-4">Dashboard</h1>
-
-          {/* Horizontal tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            {TABS.map((t) => (
-              <button
-                key={t.slug}
-                onClick={() => setActiveTab(t.slug)}
-                className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium border transition-all ${
-                  activeTab === t.slug
-                    ? "bg-[#E8740C] text-white border-[#E8740C]"
-                    : "bg-white text-spr-text-secondary border-spr-border hover:border-[#E8740C]/40 hover:text-[#E8740C]"
-                }`}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        breadcrumb={[
+          { label: "Utama", href: "/" },
+          { label: "Dashboard" },
+          { label: tab.label },
+        ]}
+        title="Dashboard"
+        subtitle="Visualisasi interaktif data pilihan raya — pilih kategori untuk meneroka."
+        filterPills={TABS.map((t) => ({
+          label: t.label,
+          active: activeTab === t.slug,
+          onClick: () => setActiveTab(t.slug),
+        }))}
+      />
 
       {/* Content */}
       {isMapTab ? (

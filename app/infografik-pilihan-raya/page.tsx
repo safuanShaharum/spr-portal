@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import Link from 'next/link';
+import { PageHeader } from '@/components/PageHeader';
 
 interface InfografikItem {
   id: number;
@@ -102,18 +102,14 @@ export default function InfografikPage() {
 
   return (
     <div className="min-h-screen bg-[#F5F5FA]">
-      <div className="bg-spr-bg-secondary py-6 sm:py-8 px-4 sm:px-6 lg:px-10">
-        <nav className="flex items-center gap-2 text-[13px] text-spr-text-muted mb-3">
-          <Link href="/" className="hover:text-spr-primary transition-colors">Utama</Link>
-          <span>/</span>
-          <span className="text-spr-navy font-medium">Infografik Pilihan Raya</span>
-        </nav>
-        <h1 className="font-display text-[28px] sm:text-[32px] font-bold text-spr-navy">Infografik Pilihan Raya</h1>
-        <p className="text-spr-text-secondary mt-1 text-sm">
-          Untuk rujukan, klik pada gambar untuk paparan lebih besar.
-          Bagi maklumat yang disertakan dengan fail PDF, sila klik kapsyen gambar untuk membuka pautan.
-        </p>
-      </div>
+      <PageHeader
+        breadcrumb={[
+          { label: 'Utama', href: '/' },
+          { label: 'Infografik Pilihan Raya' },
+        ]}
+        title="Infografik Pilihan Raya"
+        subtitle="Untuk rujukan, klik pada gambar untuk paparan lebih besar. Bagi maklumat yang disertakan dengan fail PDF, sila klik kapsyen gambar untuk membuka pautan."
+      />
 
       <section className="bg-white sticky top-0 z-10 border-b border-gray-200 shadow-sm">
         <div className="w-full px-4 sm:px-6 lg:px-10">

@@ -23,7 +23,7 @@ interface Slide {
 
 const SLIDES: Slide[] = [
   {
-    imageUrl: '/images/slides/slide-1.jpg',
+    imageUrl: '/images/slides/slide-1.webp',
     imageAlt: 'Pemilih mengundi di pusat mengundi',
     badge: 'Pemilih • 2022',
     headline: (
@@ -40,10 +40,10 @@ const SLIDES: Slide[] = [
       { label: 'Calon Bebas', value: '108' },
     ],
     ctaLabel: 'Terokai PRU-15 secara penuh',
-    ctaHref: '/katalog/perjalanan-pilihan-raya',
+    ctaHref: '/katalog?bahagian=penjalanan-pilihan-raya',
   },
   {
-    imageUrl: '/images/slides/slide-2.jpg',
+    imageUrl: '/images/slides/slide-2.webp',
     imageAlt: 'Pemandangan bandar Kuala Lumpur',
     badge: 'Keputusan • PRU-15',
     headline: (
@@ -63,7 +63,7 @@ const SLIDES: Slide[] = [
     ctaHref: '/dashboard',
   },
   {
-    imageUrl: '/images/slides/slide-3.jpg',
+    imageUrl: '/images/slides/slide-3.webp',
     imageAlt: 'Rakyat Malaysia pelbagai kaum',
     badge: 'Infografik • Koleksi',
     headline: (
@@ -160,7 +160,7 @@ export function StorytellingCarousel() {
               }}
             />
             {/* Dark overlay for text legibility */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent" />
 
             {/* Overlay content */}
             <div className="absolute inset-0 flex flex-col justify-end p-8 lg:p-10">

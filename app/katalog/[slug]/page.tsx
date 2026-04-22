@@ -4,6 +4,7 @@ import { getDatasetBySlug, getRelatedDatasets, getDatasets } from "@/lib/wordpre
 import { getNegeriName } from "@/lib/constants";
 import FormatBadge from "@/components/FormatBadge";
 import DatasetCard from "@/components/DatasetCard";
+import { PageHeader } from "@/components/PageHeader";
 import DatasetDetailClient from "./DatasetDetailClient";
 
 interface Props {
@@ -26,25 +27,22 @@ export default async function DatasetDetailPage({ params }: Props) {
 
   return (
     <div>
-      {/* Header with bg */}
-      <div className="bg-spr-bg-secondary py-10 px-4">
-        <div className="max-w-5xl mx-auto">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-[13px] text-spr-text-muted mb-6">
-            <Link href="/" className="hover:text-spr-primary transition-colors">Utama</Link>
-            <span>/</span>
-            <Link href="/katalog" className="hover:text-spr-primary transition-colors">Katalog Data</Link>
-            <span>/</span>
-            <span className="text-spr-text truncate max-w-[300px]">{dataset.title}</span>
-          </nav>
+      <PageHeader
+        breadcrumb={[
+          { label: "Utama", href: "/" },
+          { label: "Katalog Data", href: "/katalog" },
+          { label: dataset.title },
+        ]}
+        title={dataset.title}
+        subtitle={dataset.excerpt}
+      />
 
+      {/* Dataset metadata + actions */}
+      <div className="bg-spr-bg-secondary py-8 px-4">
+        <div className="max-w-5xl mx-auto">
           <div className="mb-4">
             <FormatBadge format={dataset.format} size="md" />
           </div>
-
-          <h1 className="font-display text-[28px] font-bold text-spr-navy leading-tight mb-6">
-            {dataset.title}
-          </h1>
 
           {/* Metadata row */}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-6">

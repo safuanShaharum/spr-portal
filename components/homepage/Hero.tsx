@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search, Database, BarChart3, Image as ImageIcon, ArrowRight, Users, MapPin, Scale, Building2, Eye, Globe2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -13,7 +15,18 @@ const CATEGORY_CHIPS = [
   { label: 'Pemerhati Pilihan Raya',  href: '/katalog?bahagian=penilaian-pemerhati',     icon: Globe2 },
 ];
 
+const POPULAR_QUERIES = ['Keputusan PRU-15', 'Kadar keluar mengundi', 'Infografik PRK 2024'];
+
 export function Hero() {
+  const router = useRouter();
+  const [query, setQuery] = useState('');
+
+  function go(q: string) {
+    const trimmed = q.trim();
+    if (!trimmed) return;
+    router.push(`/cari?q=${encodeURIComponent(trimmed)}`);
+  }
+
   return (
     <section className="hero-bg relative min-h-[840px] pt-48 pb-32 overflow-hidden">
       {/* Decorative circles */}
@@ -54,7 +67,9 @@ export function Hero() {
         </p>
 
         {/* Search bar */}
-        <div
+        <form
+          onSubmit={(e) => { e.preventDefault(); go(query); }}
+          role="search"
           className="glass rounded-2xl p-2 max-w-3xl mx-auto mb-14 reveal text-left"
           style={{ animationDelay: '0.5s', opacity: 0 }}
         >
@@ -62,12 +77,15 @@ export function Hero() {
             <div className="flex-1 flex items-center gap-3 px-5">
               <Search className="w-5 h-5 text-white/50" />
               <input
-                type="text"
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
                 placeholder="Cuba cari: 'keputusan PRU-15' atau 'pemilih muda'"
+                aria-label="Cari data"
                 className="w-full bg-transparent text-white placeholder-white/50 py-4 text-base outline-none"
               />
             </div>
-            <button className="bg-spr-gold text-spr-ink px-8 py-3.5 rounded-xl font-semibold hover:bg-amber-400 transition flex items-center gap-2 group">
+            <button type="submit" className="bg-spr-gold text-spr-ink px-8 py-3.5 rounded-xl font-semibold hover:bg-amber-400 transition flex items-center gap-2 group">
               <span>Cari Data</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
             </button>
@@ -75,16 +93,18 @@ export function Hero() {
           {/* Quick suggestions */}
           <div className="px-5 py-3 flex flex-wrap items-center justify-center gap-2 border-t border-white/10 mt-2">
             <span className="text-[11px] text-white/40 uppercase tracking-wider mr-2">Popular:</span>
-            {['Keputusan PRU-15', 'Kadar keluar mengundi', 'Infografik PRK 2024'].map((q) => (
+            {POPULAR_QUERIES.map((q) => (
               <button
                 key={q}
+                type="button"
+                onClick={() => go(q)}
                 className="text-xs text-white/70 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1 rounded-full transition"
               >
                 {q}
               </button>
             ))}
           </div>
-        </div>
+        </form>
 
         {/* Quick access cards */}
         <div
