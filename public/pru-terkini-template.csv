@@ -1,0 +1,18 @@
+field,value,notes
+pru_number,15,Nombor PRU (cth: 15 untuk PRU-15)
+year,2022,Tahun PRU
+date,19 November 2022,Tarikh mengundi (format bebas)
+total_parlimen,222,Jumlah kerusi Parlimen
+total_dun_semenanjung,447,Jumlah kerusi DUN Semenanjung
+pemilih_berdaftar,21800000,Jumlah pemilih berdaftar (angka mutlak)
+pemilih_berdaftar_label,21.8 juta,Label untuk display (cth: "21.8 juta")
+turnout_percentage,73.9,Kadar keluar mengundi (%)
+coalition_name,Kerajaan Perpaduan,Nama kerajaan yang ditubuhkan
+coalition_parties,"PH,BN,GPS,GRS",Kod parti kerajaan dipisah koma
+coalition_seats,112,Jumlah kerusi kerajaan
+seat_PH,82,"Agihan kerusi — PH (PAKATAN HARAPAN)"
+seat_PN,73,"Agihan kerusi — PN (PERIKATAN NASIONAL)"
+seat_BN,30,"Agihan kerusi — BN (BARISAN NASIONAL)"
+seat_GPS,23,"Agihan kerusi — GPS (GABUNGAN PARTI SARAWAK)"
+seat_GRS,6,"Agihan kerusi — GRS (PARTI GABUNGAN RAKYAT SABAH)"
+seat_OTHER,8,"Agihan kerusi — Lain-lain / Bebas (jumlah semua party lain)"
