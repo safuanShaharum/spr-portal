@@ -53,7 +53,7 @@ export function PageHeader({ breadcrumb, title, subtitle, filterPills }: PageHea
           })}
         </nav>
 
-        <h1 className="font-display text-2xl sm:text-3xl font-medium text-white leading-tight">
+        <h1 className="display-serif text-2xl sm:text-3xl text-white leading-tight">
           {title}
         </h1>
 
