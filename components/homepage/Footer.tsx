@@ -16,7 +16,6 @@ const FOOTER_COLUMNS = [
     links: [
       { label: 'Tentang Kami', href: '/tentang' },
       { label: 'Hubungi Kami', href: '/hubungi' },
-      { label: 'Maklumbalas', href: '/maklumbalas' },
       { label: 'Infografik', href: '/infografik-pilihan-raya' },
       { label: 'Dokumentasi API', href: '/api-docs' },
     ],

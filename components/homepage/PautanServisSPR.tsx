@@ -31,12 +31,12 @@ export function PautanServisSPR() {
             href="https://mysprsemak.spr.gov.my/semakan/daftarPemilih"
             target="_blank"
             rel="noopener noreferrer"
-            className="lift-card group col-span-1 md:col-span-2 lg:col-span-2 lg:row-span-2 relative overflow-hidden rounded-3xl p-10 bg-gradient-to-br from-spr-purple-deep via-spr-purple-dark to-spr-purple text-white"
+            className="lift-card group col-span-1 md:col-span-2 lg:col-span-2 lg:row-span-2 relative overflow-hidden rounded-3xl p-10 bg-gradient-to-br from-spr-purple-deep via-spr-purple-dark to-spr-purple text-white flex flex-col"
           >
             <div className="absolute -right-16 -bottom-16 w-80 h-80 rounded-full bg-white/5" />
             <div className="absolute right-8 top-8 w-32 h-32 rounded-full border border-white/20 opacity-50" />
 
-            <div className="relative">
+            <div className="relative flex flex-col flex-1">
               <div className="flex items-start justify-between mb-10">
                 <div className="w-14 h-14 bg-spr-gold rounded-2xl flex items-center justify-center">
                   <Search className="w-7 h-7 text-spr-ink" strokeWidth={2.5} />
@@ -52,11 +52,11 @@ export function PautanServisSPR() {
               <h3 className="display-serif text-4xl lg:text-5xl font-medium mb-4 leading-tight">
                 Semak status daftar pemilih
               </h3>
-              <p className="text-white/70 mb-10 max-w-md leading-relaxed">
+              <p className="text-white/70 max-w-md leading-relaxed">
                 Semak pendaftaran, kawasan pilihan raya, pusat mengundi dan saluran anda dengan nombor kad pengenalan. Data langsung dari SPR.
               </p>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mt-auto pt-10">
                 <span className="text-sm text-white/60 font-mono">mysprsemak.spr.gov.my</span>
                 <div className="w-12 h-12 rounded-full bg-spr-gold text-spr-ink flex items-center justify-center group-hover:translate-x-1 transition">
                   <ArrowRight className="w-5 h-5" strokeWidth={2.5} />

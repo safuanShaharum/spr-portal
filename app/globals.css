@@ -188,6 +188,7 @@ body {
   .cat-tadbir    { --cat: #6366F1; --cat-bg: #EEF0FE; }
   .cat-pantau    { --cat: #10B981; --cat-bg: #E6F9F1; }
   .cat-antara    { --cat: #EC4899; --cat-bg: #FDEBF3; }
+  .cat-akademi   { --cat: #0EA5E9; --cat-bg: #E6F4FC; }
 
   /* Dotted background pattern */
   .dotted-bg {

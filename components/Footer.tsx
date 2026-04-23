@@ -58,7 +58,7 @@ export default function Footer() {
               {[
                 { label: "Tentang Portal", href: "/tentang" },
                 { label: "Terma Penggunaan", href: "/terma" },
-                { label: "Dasar Privasi", href: "/privasi" },
+                { label: "Dasar Privasi", href: "/dasar-privasi" },
                 { label: "Hubungi Kami", href: "/hubungi" },
               ].map((link) => (
                 <li key={link.href}>
