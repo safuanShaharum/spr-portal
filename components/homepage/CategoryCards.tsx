@@ -125,7 +125,7 @@ export function CategoryCards() {
             Terokai Kategori
           </div>
           <h2 className="display-serif text-5xl md:text-6xl font-normal leading-tight mb-5">
-            Lapan <span className="italic text-spr-purple">dunia</span> data pilihan raya
+            Spektrum <span className="italic text-spr-purple">data</span> pilihan raya
           </h2>
           <p className="text-spr-ink/65 text-lg">
             Pilih kategori untuk mula meneroka — dari keputusan mengundi hingga perundangan,
