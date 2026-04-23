@@ -54,7 +54,7 @@ export function Hero() {
           style={{ animationDelay: '0.2s', opacity: 0 }}
         >
           Portal Data <span className="italic font-medium">Terbuka</span>{' '}
-          <span className="accent-underline">SPR.</span>
+          <span className="accent-underline">SPR</span>
         </h1>
 
         {/* Subtitle */}
@@ -63,7 +63,7 @@ export function Hero() {
           style={{ animationDelay: '0.4s', opacity: 0 }}
         >
           Statistik pemilih, keputusan, calon dan parti dari{' '}
-          <span className="text-spr-gold font-medium">2008 hingga kini</span> — disusun untuk akses mudah, bukan hanya pakar data.
+          <span className="text-spr-gold font-medium">2008 hingga kini</span>
         </p>
 
         {/* Search bar */}

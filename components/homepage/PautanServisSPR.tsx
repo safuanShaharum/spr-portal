@@ -18,7 +18,7 @@ export function PautanServisSPR() {
             Ekosistem SPR
           </div>
           <h2 className="display-serif text-5xl md:text-6xl font-normal leading-tight mb-4">
-            Servis <span className="italic">pilihan raya</span> untuk rakyat.
+            Servis <span className="italic text-spr-purple">pilihan raya</span> untuk rakyat
           </h2>
           <p className="text-spr-ink/65 text-lg">
             Portal ini fokus pada data terbuka. Untuk servis pemilih individu — semakan, pendaftaran atau aduan — gunakan pautan rasmi SPR di bawah.

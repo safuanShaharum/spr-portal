@@ -26,7 +26,7 @@ export async function DataDalamAngka() {
             Data Dalam Angka
           </div>
           <h2 className="display-serif text-5xl md:text-7xl font-normal leading-[1.02] mb-5">
-            Angka yang <span className="italic">membentuk negara</span>.
+            Angka yang <span className="italic text-spr-gold">membentuk negara</span>.
           </h2>
           <p className="text-white/60 text-lg">
             Tiga nombor untuk memahami skop Pilihan Raya Umum Ke-{pru.number} — dan siapa sebenarnya yang menentukan masa depan Malaysia.

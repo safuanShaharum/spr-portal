@@ -23,7 +23,7 @@ export async function TerkiniPortal() {
               Terkini di Portal
             </div>
             <h2 className="display-serif text-5xl md:text-6xl font-normal leading-tight">
-              Kemaskini <span className="italic">terbaru</span>.
+              Kemaskini <span className="italic text-spr-purple">terbaru</span>
             </h2>
           </div>
           <Link

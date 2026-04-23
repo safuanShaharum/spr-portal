@@ -61,7 +61,7 @@ export function SorotanData() {
               Sorotan
             </div>
             <h2 className="display-serif text-5xl md:text-6xl font-normal leading-tight mb-3">
-              Data yang <span className="italic">bercerita.</span>
+              Data yang <span className="italic text-spr-purple">bercerita</span>
             </h2>
             <p className="text-spr-ink/65 text-lg">
               Infografik yang mengubah angka kepada pemahaman — dibaca oleh wartawan, penyelidik dan rakyat.

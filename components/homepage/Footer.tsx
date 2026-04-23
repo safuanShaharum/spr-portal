@@ -70,7 +70,7 @@ export function Footer() {
                 </svg>
               </div>
               <div>
-                <div className="text-[10px] uppercase tracking-widest opacity-60">Portal Rasmi</div>
+                <div className="text-[10px] uppercase tracking-widest opacity-60">Portal Data Terbuka</div>
                 <div className="font-serif text-lg font-semibold leading-tight">Suruhanjaya Pilihan Raya</div>
               </div>
             </Link>

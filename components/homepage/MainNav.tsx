@@ -79,7 +79,7 @@ export function MainNav({ overlay }: MainNavProps = {}) {
               className="h-10 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform"
             />
             <div className="text-white min-w-0">
-              <div className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] opacity-70 font-medium">Portal Rasmi</div>
+              <div className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] opacity-70 font-medium">Portal Data Terbuka</div>
               <div className="font-serif text-sm sm:text-lg font-semibold leading-tight">Suruhanjaya Pilihan Raya</div>
             </div>
           </Link>
@@ -169,7 +169,7 @@ export function MainNav({ overlay }: MainNavProps = {}) {
                 className="h-10 w-auto object-contain"
               />
               <div>
-                <div className="text-[10px] uppercase tracking-[0.2em] opacity-70 font-medium">Portal Rasmi</div>
+                <div className="text-[10px] uppercase tracking-[0.2em] opacity-70 font-medium">Portal Data Terbuka</div>
                 <div className="font-serif text-base font-semibold leading-tight">Suruhanjaya Pilihan Raya</div>
               </div>
             </Link>
