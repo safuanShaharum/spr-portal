@@ -136,6 +136,46 @@ export default function ElectionModal({ row, sheetSlug, onClose }: Props) {
     ? parseFloat(((jumlahMengundi / pemilihBerdaftar) * 100).toFixed(1))
     : 0;
 
+  const handleDownloadCsv = () => {
+    const esc = (v: unknown) => {
+      const s = String(v ?? "");
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const rows: string[] = [];
+    rows.push(["Jenis", "Negeri", "Pilihan Raya", "Tahun", "Kawasan"].map(esc).join(","));
+    rows.push([jenis, negeri, namaPR, tahun, kawasan].map(esc).join(","));
+    rows.push("");
+    rows.push(["Pemilih Berdaftar", "Jumlah Mengundi", "Peratusan Keluar (%)", "Undi Rosak / Tidak Sah", "Majoriti"].map(esc).join(","));
+    rows.push([pemilihBerdaftar, jumlahMengundi, peratusanKeluar, undiDitolak, majoriti].map(esc).join(","));
+    rows.push("");
+    rows.push(["Kedudukan", "Calon", "Parti", "Nama Parti Penuh", "Undi", "Peratusan (%)", "Status"].map(esc).join(","));
+    candidates.forEach((c, i) => {
+      rows.push([
+        i + 1,
+        c.nama,
+        c.parti,
+        c.parti_penuh,
+        c.undi,
+        c.peratusan,
+        c.isWinner ? "Menang" : "Kalah",
+      ].map(esc).join(","));
+    });
+
+    const csv = "﻿" + rows.join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const safe = (s: string) => s.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase();
+    const filename = `keputusan-${safe(jenis)}-${safe(kawasan)}-${safe(namaPR || tahun) || "data"}.csv`;
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
@@ -281,7 +321,12 @@ export default function ElectionModal({ row, sheetSlug, onClose }: Props) {
 
           {/* Buttons */}
           <div className="flex items-center gap-3 mt-4">
-            <button className="flex-1 py-3 bg-spr-navy text-white rounded-xl text-sm font-semibold hover:bg-spr-navy/90 transition-colors inline-flex items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={handleDownloadCsv}
+              disabled={loading || candidates.length === 0}
+              className="flex-1 py-3 bg-spr-navy text-white rounded-xl text-sm font-semibold hover:bg-spr-navy/90 transition-colors inline-flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
