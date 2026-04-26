@@ -43,9 +43,7 @@ const SECTIONS = [
   {
     title: "Undang-Undang",
     links: [
-      { label: "Penafian", href: "/penafian" },
-      { label: "Dasar Privasi", href: "/dasar-privasi" },
-      { label: "Dasar Keselamatan", href: "/dasar-keselamatan" },
+      { label: "Dasar-Dasar dan Hak Cipta", href: "/dasar-dasar-dan-hak-cipta" },
       { label: "Peta Laman", href: "/peta-laman" },
     ],
   },

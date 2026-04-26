@@ -37,9 +37,9 @@ export function TopTicker() {
         </span>
       </div>
       <div className="hidden md:flex items-center gap-5 text-[11px] opacity-80">
-        <a href="/penafian" className="hover:opacity-100 transition">Penafian</a>
-        <a href="/dasar-privasi" className="hover:opacity-100 transition">Dasar Privasi</a>
-        <span>Hak Cipta © 2026</span>
+        <a href="/dasar-dasar-dan-hak-cipta#dasar-privasi" className="hover:opacity-100 transition">Dasar Privasi</a>
+        <a href="/dasar-dasar-dan-hak-cipta#hak-cipta" className="hover:opacity-100 transition">Hak Cipta</a>
+        <span>© 2026</span>
       </div>
     </div>
   );
