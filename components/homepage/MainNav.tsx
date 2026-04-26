@@ -4,7 +4,7 @@ import { startTransition, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, Search, X } from 'lucide-react';
+import { ArrowRight, Menu, Search, X } from 'lucide-react';
 
 const NAV_ITEMS = [
   { label: 'Utama', href: '/' },
@@ -71,8 +71,8 @@ export function MainNav({ overlay }: MainNavProps = {}) {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group lg:justify-self-start">
             <Image
-              src="/images/LOGO_JATA.png"
-              alt="Jata Negara"
+              src="/images/logo-spr.png"
+              alt="Suruhanjaya Pilihan Raya"
               width={62}
               height={48}
               priority
@@ -106,23 +106,33 @@ export function MainNav({ overlay }: MainNavProps = {}) {
             ))}
           </div>
 
-          {/* Desktop actions */}
+          {/* Desktop actions — CTA on homepage, search on subpages */}
           <div className="hidden lg:flex items-center gap-3 lg:justify-self-end">
-            <form
-              onSubmit={handleSearch}
-              className="flex items-center gap-2 glass text-white/90 focus-within:text-white px-4 py-2.5 rounded-full text-sm transition"
-              role="search"
-            >
-              <Search className="w-4 h-4 shrink-0" />
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Cari dataset..."
-                aria-label="Cari dataset"
-                className="bg-transparent outline-none placeholder:text-white/60 w-44 lg:w-56"
-              />
-            </form>
+            {isOverlay ? (
+              <Link
+                href="/katalog"
+                className="inline-flex items-center gap-2 bg-spr-gold text-spr-ink hover:bg-spr-gold/90 px-5 py-2.5 rounded-full text-sm font-semibold transition group"
+              >
+                Mula meneroka
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" strokeWidth={2.5} />
+              </Link>
+            ) : (
+              <form
+                onSubmit={handleSearch}
+                className="flex items-center gap-2 glass text-white/90 focus-within:text-white px-4 py-2.5 rounded-full text-sm transition"
+                role="search"
+              >
+                <Search className="w-4 h-4 shrink-0" />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Cari dataset..."
+                  aria-label="Cari dataset"
+                  className="bg-transparent outline-none placeholder:text-white/60 w-44 lg:w-56"
+                />
+              </form>
+            )}
           </div>
 
           {/* Mobile hamburger */}
@@ -162,8 +172,8 @@ export function MainNav({ overlay }: MainNavProps = {}) {
           <div className="flex items-center justify-between px-5 py-5 border-b border-white/10">
             <Link href="/" onClick={() => startTransition(() => setDrawerOpen(false))} className="flex items-center gap-3">
               <Image
-                src="/images/LOGO_JATA.png"
-                alt="Jata Negara"
+                src="/images/logo-spr.png"
+                alt="Suruhanjaya Pilihan Raya"
                 width={52}
                 height={40}
                 className="h-10 w-auto object-contain"

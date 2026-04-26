@@ -3,7 +3,7 @@ import { Playfair_Display, DM_Sans, Fraunces, Inter_Tight, JetBrains_Mono } from
 import "./globals.css";
 import { TopTicker } from "@/components/homepage/TopTicker";
 import { MainNav } from "@/components/homepage/MainNav";
-import FooterLight from "@/components/FooterLight";
+import Footer from "@/components/Footer";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -60,7 +60,7 @@ export default function RootLayout({
         <TopTicker />
         <MainNav />
         <main>{children}</main>
-        <FooterLight />
+        <Footer />
       </body>
     </html>
   );
