@@ -128,8 +128,7 @@ export function CategoryCards() {
             Spektrum <span className="italic text-spr-purple">data</span> pilihan raya
           </h2>
           <p className="text-spr-ink/65 text-lg">
-            Pilih kategori untuk mula meneroka — dari keputusan mengundi hingga perundangan,
-            setiap kategori dikurasi untuk akses mudah.
+            Pilih kategori untuk mula meneroka — dari keputusan mengundi hingga perundangan, setiap kategori dapat diakses dengan mudah.
           </p>
         </div>
 

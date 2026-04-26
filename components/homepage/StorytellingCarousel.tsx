@@ -113,7 +113,7 @@ export function StorytellingCarousel() {
               Sekilas Pandang
             </div>
             <h2 className="display-serif text-5xl md:text-6xl font-normal leading-tight max-w-2xl">
-              Malaysia <span className="italic text-spr-purple">Pilihan Raya</span>
+              Malaysia & <span className="italic text-spr-purple">Pilihan Raya</span>
             </h2>
           </div>
           <div className="hidden md:flex items-center gap-2">
