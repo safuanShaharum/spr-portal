@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -8,24 +8,17 @@ import JSZip from "jszip";
 import { kml } from "@mapbox/togeojson";
 import { SlidersHorizontal, X } from "lucide-react";
 import { NEGERI_LIST } from "@/lib/constants";
-import { COALITION_COLORS } from "@/lib/parti-colors";
+import { COALITION_COLORS, PARTI_COLORS_DASHBOARD } from "@/lib/parti-colors";
+import { getDisplayColor, getLegendItems, YEAR_TO_PRU, type PRUKey } from "@/lib/coalition-mapper";
 import { getPartiLogo } from "@/lib/parti-logo";
 import { getCatalogData } from "@/lib/catalog";
 import type { Feature, FeatureCollection } from "geojson";
 
 const EMPTY_FC: FeatureCollection = { type: "FeatureCollection", features: [] };
 
-const COALITION_MAP: Record<string, string> = {
-  PH: "PH", PKR: "PH", DAP: "PH", AMANAH: "PH", UPKO: "PH",
-  PN: "PN", PAS: "PN", BERSATU: "PN", PPBM: "PN",
-  BN: "BN", UMNO: "BN", MCA: "BN", MIC: "BN", GERAKAN: "BN",
-  GPS: "GPS", PBB: "GPS", SUPP: "GPS", PDP: "GPS", PRS: "GPS",
-  GRS: "GRS", PBS: "GRS", PBRS: "GRS", STARSABAH: "GRS", STAR: "GRS", LDP: "GRS", SAPP: "GRS",
-};
-function getCoalition(p: string): string { return COALITION_MAP[String(p).trim()] || "LAIN"; }
 function normalize(s: string): string { return s.toUpperCase().replace(/\./g, "").replace(/\s+/g, " ").trim(); }
 
-type WinnerInfo = { color: string; calon: string; parti: string; undi: number; majoriti: number; negeri: string; kawasan: string; isPRK?: boolean; prkLabel?: string };
+type WinnerInfo = { color: string; calon: string; parti: string; coalitionAbbr: string | null; undi: number; majoriti: number; negeri: string; kawasan: string; isPRK?: boolean; prkLabel?: string };
 type Row = Record<string, unknown>;
 
 const PRU_YEARS = [
@@ -60,23 +53,12 @@ function FitMalaysia({ onReady }: { onReady: (map: L.Map) => void }) {
   return null;
 }
 
-const LEGEND_ITEMS = [
-  { label: "PH (Pakatan Harapan)", color: COALITION_COLORS.PH },
-  { label: "PN (Perikatan Nasional)", color: COALITION_COLORS.PN },
-  { label: "BN (Barisan Nasional)", color: COALITION_COLORS.BN },
-  { label: "GPS (Gabungan Parti Sarawak)", color: COALITION_COLORS.GPS },
-  { label: "GRS (Gabungan Rakyat Sabah)", color: COALITION_COLORS.GRS },
-  { label: "Lain-lain", color: COALITION_COLORS.LAIN },
-  { label: "Ditangguhkan / PRK", color: "#D1D5DB" },
-];
-
 export default function PetaPersempadanan() {
   const [parlimenData, setParlimenData] = useState<FeatureCollection>(EMPTY_FC);
   const [dunData, setDunData] = useState<FeatureCollection>(EMPTY_FC);
   const [pruRows, setPruRows] = useState<Row[]>([]);
   const [dunRows, setDunRows] = useState<Row[]>([]);
   const [prkRows, setPrkRows] = useState<Row[]>([]);
-  const [winnerMap, setWinnerMap] = useState<Map<string, WinnerInfo>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [layer, setLayer] = useState<"parlimen" | "dun">("parlimen");
@@ -129,9 +111,14 @@ export default function PetaPersempadanan() {
     return () => { cancelled = true; };
   }, []);
 
-  // Rebuild winner map when layer/year changes
-  useEffect(() => {
+  // Rebuild winner map synchronously with year/layer — useMemo (not useEffect+setState)
+  // ensures the map and its colors are always in sync with selectedYear in the
+  // same render. Otherwise the GeoJSON remounts with stale style closures and
+  // first-load shows wrong coalition colors until the user hovers.
+  const winnerMap = useMemo<Map<string, WinnerInfo>>(() => {
     const wMap = new Map<string, WinnerInfo>();
+    // DUN "latest" treated as PRU15 for coalition mapping (latest state polls 2022+)
+    const pruKey: PRUKey | undefined = YEAR_TO_PRU[selectedYear] || (selectedYear === "latest" ? "PRU15" : undefined);
 
     const addWinner = (row: Row, kawasanField: string, opts?: { isPRK?: boolean; prkLabel?: string }) => {
       const status = String(row["StatusCalon"] || row["STATUS"] || "").trim().toUpperCase();
@@ -142,10 +129,12 @@ export default function PetaPersempadanan() {
       if (opts?.isPRK && (wMap.has(kawasan) || wMap.has(normalize(kawasan)))) return;
 
       const parti = String(row["SINGKATAN NAMA PARTI BERTANDING"] || "").trim();
+      const display = getDisplayColor(pruKey, parti, PARTI_COLORS_DASHBOARD, COALITION_COLORS);
       const info: WinnerInfo = {
-        color: COALITION_COLORS[getCoalition(parti)] || "#9E9E9E",
+        color: display.color,
         calon: String(row["NAMA ATAS KERTAS UNDI"] || row["NAMA KERTAS UNDI"] || ""),
         parti,
+        coalitionAbbr: display.coalitionAbbr,
         undi: parseInt(String(row["BILANGAN UNDI"] || "0"), 10) || 0,
         majoriti: parseInt(String(row["MAJORITI"] || "0"), 10) || 0,
         negeri: String(row["NEGERI"] || ""), kawasan,
@@ -198,13 +187,18 @@ export default function PetaPersempadanan() {
       }
     }
 
-    setWinnerMap(wMap);
+    return wMap;
   }, [layer, selectedYear, pruRows, dunRows, prkRows]);
 
-  // Reset year when layer changes
+  // Keep selected year when switching layer if it exists in the target layer's options.
+  // Bridge "latest" (DUN-only) ↔ "2022" (PRU-only) since both represent the most recent cycle.
   const handleLayerChange = (l: "parlimen" | "dun") => {
     setLayer(l);
-    setSelectedYear(l === "parlimen" ? "2022" : "latest");
+    const targetOptions = l === "parlimen" ? PRU_YEARS : DUN_YEARS;
+    if (targetOptions.some((y) => y.value === selectedYear)) return;
+    if (l === "parlimen" && selectedYear === "latest") setSelectedYear("2022");
+    else if (l === "dun" && selectedYear === "2022") setSelectedYear("latest");
+    else setSelectedYear(l === "parlimen" ? "2022" : "latest");
   };
 
   const geojsonData = layer === "parlimen" ? parlimenData : dunData;
@@ -233,20 +227,26 @@ export default function PetaPersempadanan() {
     const path = leafletLayer as L.Path;
     const winner = findWinner(feature);
     const name = String(feature.properties?.name || "");
+    const partyLabel = winner ? (winner.coalitionAbbr ? `${winner.coalitionAbbr} (${winner.parti})` : winner.parti) : "";
+    const badgeLabel = winner ? (winner.coalitionAbbr || winner.parti) : "";
+    // Prefer coalition logo (cleaner branding); fallback to party logo
+    const logoSrc = winner ? (getPartiLogo(winner.coalitionAbbr || "") || getPartiLogo(winner.parti)) : null;
+    const logoImg = logoSrc ? `<div style="display:flex;justify-content:center;margin-bottom:6px"><img src="${logoSrc}" alt="${badgeLabel}" style="width:40px;height:40px;object-fit:contain"/></div>` : "";
+    const popupLogoImg = logoSrc ? `<div style="display:flex;justify-content:center;margin-bottom:8px"><img src="${logoSrc}" alt="${badgeLabel}" style="width:56px;height:56px;object-fit:contain"/></div>` : "";
     path.on({
       mouseover: () => {
         path.setStyle({ fillOpacity: 0.85, weight: 2.5, color: "#FFFFFF" });
         let tip: string;
-        if (winner?.isPRK) tip = `<strong>${name}</strong><br/>${winner.calon}<br/><span style="color:${winner.color};font-weight:bold">${winner.parti}</span> — PRK`;
-        else if (winner) tip = `<strong>${name}</strong><br/>${winner.calon}<br/><span style="color:${winner.color};font-weight:bold">${winner.parti}</span> — ${winner.undi.toLocaleString()} undi`;
+        if (winner?.isPRK) tip = `${logoImg}<strong>${name}</strong><br/>${winner.calon}<br/><span style="color:${winner.color};font-weight:bold">${partyLabel}</span> — PRK`;
+        else if (winner) tip = `${logoImg}<strong>${name}</strong><br/>${winner.calon}<br/><span style="color:${winner.color};font-weight:bold">${partyLabel}</span> — ${winner.undi.toLocaleString()} undi`;
         else tip = `<strong>${name}</strong><br/><em style="color:#9CA3AF">Ditangguhkan / Tiada data</em>`;
         path.bindTooltip(tip, { sticky: true, className: "peta-tooltip", direction: "top" }).openTooltip();
       },
       mouseout: () => { path.setStyle(getStyle(feature)); path.closeTooltip(); },
       click: () => {
         let html: string;
-        if (winner?.isPRK) html = `<div style="font-family:DM Sans,sans-serif;min-width:200px"><div style="font-weight:700;font-size:14px;margin-bottom:4px">${name}</div><div style="font-size:12px;color:#666;margin-bottom:8px">${winner.negeri}</div><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="background:${winner.color};color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700">${winner.parti}</span><span style="font-size:13px;font-weight:600">${winner.calon}</span></div><div style="font-size:12px;color:#444">Undi: <b>${winner.undi.toLocaleString()}</b> · Majoriti: <b>${winner.majoriti.toLocaleString()}</b></div><div style="font-size:11px;color:#F97316;margin-top:6px;font-weight:600">Keputusan melalui ${winner.prkLabel}</div></div>`;
-        else if (winner) html = `<div style="font-family:DM Sans,sans-serif;min-width:200px"><div style="font-weight:700;font-size:14px;margin-bottom:4px">${name}</div><div style="font-size:12px;color:#666;margin-bottom:8px">${winner.negeri}</div><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="background:${winner.color};color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700">${winner.parti}</span><span style="font-size:13px;font-weight:600">${winner.calon}</span></div><div style="font-size:12px;color:#444">Undi: <b>${winner.undi.toLocaleString()}</b> · Majoriti: <b>${winner.majoriti.toLocaleString()}</b></div></div>`;
+        if (winner?.isPRK) html = `<div style="font-family:DM Sans,sans-serif;min-width:220px">${popupLogoImg}<div style="font-weight:700;font-size:14px;margin-bottom:4px;text-align:center">${name}</div><div style="font-size:12px;color:#666;margin-bottom:8px;text-align:center">${winner.negeri}</div><div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px"><span style="background:${winner.color};color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700">${badgeLabel}</span><span style="font-size:13px;font-weight:600">${winner.calon}</span></div><div style="font-size:12px;color:#444;text-align:center">Parti: <b>${winner.parti}</b> · Undi: <b>${winner.undi.toLocaleString()}</b> · Majoriti: <b>${winner.majoriti.toLocaleString()}</b></div><div style="font-size:11px;color:#F97316;margin-top:6px;font-weight:600;text-align:center">Keputusan melalui ${winner.prkLabel}</div></div>`;
+        else if (winner) html = `<div style="font-family:DM Sans,sans-serif;min-width:220px">${popupLogoImg}<div style="font-weight:700;font-size:14px;margin-bottom:4px;text-align:center">${name}</div><div style="font-size:12px;color:#666;margin-bottom:8px;text-align:center">${winner.negeri}</div><div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px"><span style="background:${winner.color};color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700">${badgeLabel}</span><span style="font-size:13px;font-weight:600">${winner.calon}</span></div><div style="font-size:12px;color:#444;text-align:center">Parti: <b>${winner.parti}</b> · Undi: <b>${winner.undi.toLocaleString()}</b> · Majoriti: <b>${winner.majoriti.toLocaleString()}</b></div></div>`;
         else html = `<div style="font-family:DM Sans,sans-serif;min-width:180px"><div style="font-weight:700;font-size:14px;margin-bottom:4px">${name}</div><div style="font-size:12px;color:#9CA3AF;font-style:italic">Kawasan ini ditangguhkan — keputusan melalui PRK</div></div>`;
         (leafletLayer as L.Polygon).bindPopup(html, { className: "peta-popup", maxWidth: 300 }).openPopup();
       },
@@ -296,19 +296,22 @@ export default function PetaPersempadanan() {
     </div>
   );
 
+  const legendItems = getLegendItems(
+    YEAR_TO_PRU[selectedYear] || (selectedYear === "latest" ? "PRU15" : undefined),
+    PARTI_COLORS_DASHBOARD,
+    COALITION_COLORS,
+  );
+
   const renderLegendCard = () => (
     <div className="bg-white border border-spr-border rounded-xl p-3 shadow-lg">
       <div className="text-[10px] font-semibold text-spr-text-muted uppercase tracking-wider mb-2">Legenda</div>
       <div className="space-y-1.5">
-        {LEGEND_ITEMS.map((item) => {
-          const coalName = item.label.split(" ")[0];
-          const logo = getPartiLogo(coalName);
+        {legendItems.map((item) => {
+          const logo = getPartiLogo(item.abbr);
           return (
-            <div key={item.label} className="flex items-center gap-2">
-              {item.label.includes("Ditangguhkan") ? (
-                <div className="w-3 h-3 rounded-sm shrink-0" style={{ border: "1.5px dashed #9CA3AF", backgroundColor: "transparent", backgroundImage: "repeating-linear-gradient(45deg, #D1D5DB 0, #D1D5DB 1px, transparent 1px, transparent 3px)" }} />
-              ) : logo ? (
-                <img src={logo} alt={coalName} width={16} height={16} className="object-contain rounded-sm shrink-0" />
+            <div key={item.abbr} className="flex items-center gap-2">
+              {logo ? (
+                <img src={logo} alt={item.abbr} width={16} height={16} className="object-contain rounded-sm shrink-0" />
               ) : (
                 <div className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: item.color }} />
               )}
@@ -316,6 +319,17 @@ export default function PetaPersempadanan() {
             </div>
           );
         })}
+        <div className="flex items-center gap-2">
+          <div
+            className="w-3 h-3 rounded-sm shrink-0"
+            style={{
+              border: "1.5px dashed #9CA3AF",
+              backgroundColor: "transparent",
+              backgroundImage: "repeating-linear-gradient(45deg, #D1D5DB 0, #D1D5DB 1px, transparent 1px, transparent 3px)",
+            }}
+          />
+          <span className="text-[11px] text-spr-text-secondary">Ditangguhkan / PRK</span>
+        </div>
       </div>
     </div>
   );

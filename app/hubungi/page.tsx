@@ -80,25 +80,6 @@ export default function HubungiPage() {
             );
           })}
         </div>
-
-        <section className="mt-12 rounded-2xl bg-spr-purple/5 border border-spr-purple/15 p-6 sm:p-8">
-          <h2 className="display-serif text-xl font-semibold text-spr-ink mb-2">
-            Permohonan Data Khas
-          </h2>
-          <p className="text-spr-ink/75 text-sm leading-relaxed">
-            Bagi permohonan dataset yang tidak tersedia di portal atau permintaan
-            data dalam format khas (contoh: breakdown peringkat DM atau
-            data bersejarah), sila hantar permohonan rasmi ke{" "}
-            <a
-              href="mailto:data@spr.gov.my"
-              className="text-spr-purple font-medium hover:underline"
-            >
-              data@spr.gov.my
-            </a>{" "}
-            dengan menyatakan tujuan penggunaan, skop data dan tempoh diperlukan.
-            Permohonan akan dinilai dan dibalas dalam tempoh 14 hari bekerja.
-          </p>
-        </section>
       </div>
     </div>
   );

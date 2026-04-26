@@ -53,8 +53,7 @@ export function Hero() {
           className="display-serif text-white text-[54px] md:text-[88px] lg:text-[84px] font-normal leading-[0.95] mb-8 mx-auto max-w-5xl reveal"
           style={{ animationDelay: '0.2s', opacity: 0 }}
         >
-          Portal Data <span className="italic font-medium">Terbuka</span>{' '}
-          <span className="accent-underline">SPR</span>
+          Portal Data Terbuka SPR
         </h1>
 
         {/* Subtitle */}

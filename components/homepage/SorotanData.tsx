@@ -35,7 +35,12 @@ export function SorotanData() {
   useEffect(() => {
     setLoading(true);
     const params = new URLSearchParams({ per_page: '4' });
-    if (activeFilter) params.set('kategori', activeFilter);
+    if (activeFilter) {
+      params.set('kategori', activeFilter);
+    } else {
+      params.set('kategori', 'pru');
+      params.set('pru_number', '15');
+    }
 
     fetch(`${WP_API}/spr/v1/infografik?${params}`)
       .then((r) => r.json())
