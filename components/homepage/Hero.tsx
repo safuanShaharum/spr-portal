@@ -69,19 +69,19 @@ export function Hero() {
         <form
           onSubmit={(e) => { e.preventDefault(); go(query); }}
           role="search"
-          className="glass rounded-2xl p-2 max-w-3xl mx-auto mb-14 reveal text-left"
+          className="glass rounded-2xl p-[25px] max-w-4xl mx-auto mb-14 reveal text-left"
           style={{ animationDelay: '0.5s', opacity: 0 }}
         >
           <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
-            <div className="flex-1 flex items-center gap-3 px-5">
-              <Search className="w-5 h-5 text-white/50" />
+            <div className="flex-1 flex items-center gap-3 px-4 bg-white rounded-xl shadow-sm">
+              <Search className="w-5 h-5 text-spr-ink/40" />
               <input
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Cuba cari: 'keputusan PRU-15' atau 'pemilih muda'"
                 aria-label="Cari data"
-                className="w-full bg-transparent text-white placeholder-white/50 py-4 text-base outline-none"
+                className="w-full bg-transparent text-spr-ink placeholder:text-spr-ink/40 py-4 text-base outline-none"
               />
             </div>
             <button
@@ -93,14 +93,14 @@ export function Hero() {
             </button>
           </div>
           {/* Quick suggestions */}
-          <div className="px-5 py-3 flex flex-wrap items-center justify-center gap-2 border-t border-white/10 mt-2">
-            <span className="text-[11px] text-white/40 uppercase tracking-wider mr-2">Popular:</span>
+          <div className="pt-5 mt-5 flex flex-wrap items-center justify-center gap-2 border-t border-white/10">
+            <span className="text-[11px] text-white/60 uppercase tracking-wider font-semibold mr-2">Popular:</span>
             {POPULAR_QUERIES.map((q) => (
               <button
                 key={q}
                 type="button"
                 onClick={() => go(q)}
-                className="text-xs text-white/70 hover:text-white bg-white/5 hover:bg-white/10 px-3 py-1 rounded-full transition"
+                className="text-xs font-medium text-spr-purple-deep bg-white hover:bg-spr-gold hover:text-spr-ink px-3 py-1.5 rounded-full shadow-sm transition"
               >
                 {q}
               </button>
