@@ -129,9 +129,10 @@ body {
     z-index: -1;
   }
 
-  /* Ticker bar */
+  /* Ticker bar — darkest of the three header strata for clear contrast */
   .ticker-bar {
-    background: linear-gradient(90deg, var(--spr-purple-deep) 0%, var(--spr-purple-dark) 100%);
+    background: #0D1530;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   /* Marquee animation */

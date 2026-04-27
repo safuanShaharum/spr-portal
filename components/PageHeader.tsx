@@ -23,13 +23,13 @@ interface PageHeaderProps {
 export function PageHeader({ breadcrumb, title, subtitle, filterPills }: PageHeaderProps) {
   return (
     <section
-      className="relative bg-gradient-to-b from-spr-purple-deep to-spr-purple-dark text-white"
+      className="relative bg-spr-purple/5 text-spr-ink border-b border-spr-ink/10"
       aria-label="Page header"
     >
       <div className="w-full px-4 sm:px-6 lg:px-10 py-8 sm:py-10">
         <nav
           aria-label="Breadcrumb"
-          className="flex items-center gap-1.5 text-xs text-white/70 mb-3"
+          className="flex items-center gap-1.5 text-xs text-spr-ink/55 mb-3"
         >
           {breadcrumb.map((c, i) => {
             const isLast = i === breadcrumb.length - 1;
@@ -38,12 +38,12 @@ export function PageHeader({ breadcrumb, title, subtitle, filterPills }: PageHea
                 {c.href && !isLast ? (
                   <Link
                     href={c.href}
-                    className="hover:text-white transition-colors"
+                    className="hover:text-spr-purple transition-colors"
                   >
                     {c.label}
                   </Link>
                 ) : (
-                  <span className={isLast ? 'text-white' : 'text-white/70'}>
+                  <span className={isLast ? 'text-spr-ink font-medium' : 'text-spr-ink/55'}>
                     {c.label}
                   </span>
                 )}
@@ -53,12 +53,12 @@ export function PageHeader({ breadcrumb, title, subtitle, filterPills }: PageHea
           })}
         </nav>
 
-        <h1 className="display-serif text-2xl sm:text-3xl text-white leading-tight">
+        <h1 className="display-serif text-2xl sm:text-3xl text-spr-ink leading-tight">
           {title}
         </h1>
 
         {subtitle && (
-          <p className="mt-2 max-w-[560px] text-sm text-white/75 leading-relaxed">
+          <p className="mt-2 max-w-[560px] text-sm text-spr-ink/65 leading-relaxed">
             {subtitle}
           </p>
         )}
@@ -68,8 +68,8 @@ export function PageHeader({ breadcrumb, title, subtitle, filterPills }: PageHea
             {filterPills.map((p) => {
               const cls = `inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
                 p.active
-                  ? 'bg-white/15 text-white'
-                  : 'bg-white/5 text-white/70 hover:text-white hover:bg-white/10'
+                  ? 'bg-spr-purple text-white'
+                  : 'bg-spr-ink/5 text-spr-ink/70 hover:text-spr-ink hover:bg-spr-ink/10'
               }`;
               if (p.href) {
                 return (
