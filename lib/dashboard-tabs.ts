@@ -9,8 +9,8 @@ export const DASHBOARD_TABS: DashboardTab[] = [
   { slug: "peta-persempadanan", label: "Peta Persempadanan" },
   { slug: "parti-politik", label: "Parti Politik" },
   { slug: "pemerhati", label: "Pemerhati" },
-  { slug: "akademi", label: "Akademi Pilihan Raya" },
+  { slug: "akademi", label: "Pendidikan Pengundi" },
   { slug: "persempadanan", label: "Persempadanan" },
   { slug: "perundangan", label: "Perundangan" },
-  { slug: "pemantauan", label: "Pemantauan & Operasi" },
+  { slug: "pemantauan", label: "Kesalahan Pilihan Raya" },
 ];

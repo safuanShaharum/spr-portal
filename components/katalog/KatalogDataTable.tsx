@@ -31,8 +31,11 @@ function formatValue(value: unknown, col: ColumnDef): React.ReactNode {
       const n = Number(value);
       return isNaN(n) ? "—" : `RM ${n.toLocaleString()}`;
     }
-    case "date":
-      return new Date(String(value)).toLocaleDateString("ms-MY", { day: "numeric", month: "short", year: "numeric" });
+    case "date": {
+      const d = new Date(String(value));
+      if (isNaN(d.getTime())) return "—";
+      return d.toLocaleDateString("ms-MY", { day: "numeric", month: "short", year: "numeric" });
+    }
     case "badge": {
       const str = String(value);
       const color = col.badgeColors?.[str] || "#6B7280";
@@ -89,12 +92,15 @@ export default function KatalogDataTable({ columns, data, title, onRowClick, ser
   };
 
   const downloadCsv = () => {
-    const header = columns.map((c) => c.header).join(",");
-    const rows = sorted.map((row) =>
-      columns.map((c) => {
-        const v = row[c.key];
-        return `"${String(v ?? "").replace(/"/g, '""')}"`;
-      }).join(",")
+    const header = ["BIL.", ...columns.map((c) => c.header)].join(",");
+    const rows = sorted.map((row, idx) =>
+      [
+        idx + 1,
+        ...columns.map((c) => {
+          const v = row[c.key];
+          return `"${String(v ?? "").replace(/"/g, '""')}"`;
+        }),
+      ].join(",")
     );
     const csv = [header, ...rows].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -130,6 +136,9 @@ export default function KatalogDataTable({ columns, data, title, onRowClick, ser
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-[#1A2332]">
+                <th className="px-4 py-3 text-left text-[11px] font-semibold text-white uppercase tracking-wider whitespace-nowrap select-none">
+                  BIL.
+                </th>
                 {columns.map((col) => (
                   <th key={col.key} onClick={() => toggleSort(col.key)}
                     className="px-4 py-3 text-left text-[11px] font-semibold text-white uppercase tracking-wider cursor-pointer hover:text-white/80 whitespace-nowrap select-none">
@@ -144,18 +153,24 @@ export default function KatalogDataTable({ columns, data, title, onRowClick, ser
               </tr>
             </thead>
             <tbody>
-              {pageData.map((row, i) => (
-                <tr key={i} onClick={() => onRowClick?.(row)}
-                  className={`border-t border-spr-border-light hover:bg-spr-primary-50 transition-colors ${onRowClick ? "cursor-pointer" : ""} ${i % 2 === 0 ? "bg-white" : "bg-[#F8FAFC]"}`}>
-                  {columns.map((col) => (
-                    <td key={col.key} className="px-4 py-2.5 text-spr-text whitespace-nowrap">
-                      {formatValue(row[col.key], col)}
+              {pageData.map((row, i) => {
+                const rowNum = sp ? (sp.page - 1) * sp.limit + i + 1 : (page - 1) * perPage + i + 1;
+                return (
+                  <tr key={i} onClick={() => onRowClick?.(row)}
+                    className={`border-t border-spr-border-light hover:bg-spr-primary-50 transition-colors ${onRowClick ? "cursor-pointer" : ""} ${i % 2 === 0 ? "bg-white" : "bg-[#F8FAFC]"}`}>
+                    <td className="px-4 py-2.5 text-spr-text-muted whitespace-nowrap font-mono text-xs">
+                      {rowNum}
                     </td>
-                  ))}
-                </tr>
-              ))}
+                    {columns.map((col) => (
+                      <td key={col.key} className="px-4 py-2.5 text-spr-text whitespace-nowrap">
+                        {formatValue(row[col.key], col)}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
               {pageData.length === 0 && (
-                <tr><td colSpan={columns.length} className="px-4 py-12 text-center text-spr-text-muted">Tiada data dijumpai.</td></tr>
+                <tr><td colSpan={columns.length + 1} className="px-4 py-12 text-center text-spr-text-muted">Tiada data dijumpai.</td></tr>
               )}
             </tbody>
           </table>

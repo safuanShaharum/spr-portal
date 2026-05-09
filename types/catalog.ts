@@ -3,6 +3,7 @@ export interface CatalogIndex {
   name: string;
   rows: number;
   columns: string[];
+  yearRange?: string | null;
   size_kb: number;
 }
 

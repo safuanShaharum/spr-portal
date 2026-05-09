@@ -9,7 +9,7 @@ const LINK_COLUMNS = [
       { label: "Pendaftaran Pemilih", href: "/katalog?bahagian=pendaftaran-pemilih" },
       { label: "Persempadanan", href: "/katalog?bahagian=persempadanan" },
       { label: "Perundangan", href: "/katalog?bahagian=perundangan" },
-      { label: "Pemantauan & Operasi", href: "/katalog?bahagian=pemantauan-operasi" },
+      { label: "Kesalahan Pilihan Raya", href: "/katalog?bahagian=pemantauan-operasi" },
     ],
   },
   {

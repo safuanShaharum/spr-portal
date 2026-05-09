@@ -12,7 +12,7 @@ export default function Sidebar({ items, activeSlug, onSelect }: Props) {
     <aside className="w-[260px] shrink-0 hidden lg:block">
       <div className="sticky top-28 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
         <div className="text-[11px] font-semibold text-spr-text-muted uppercase tracking-wider mb-3 px-3">
-          Bahagian
+          Kategori
         </div>
         <nav className="space-y-0.5">
           {items.map((b) => (

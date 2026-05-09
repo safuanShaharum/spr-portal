@@ -11,7 +11,7 @@ const CATEGORY_CHIPS = [
   { label: 'Persempadanan',           href: '/katalog?bahagian=persempadanan',           icon: MapPin },
   { label: 'Perundangan',             href: '/katalog?bahagian=perundangan',             icon: Scale },
   { label: 'Pentadbiran & Pengurusan', href: '/katalog?bahagian=pentadbiran-pengurusan', icon: Building2 },
-  { label: 'Pemantauan & Operasi',    href: '/katalog?bahagian=pemantauan-operasi',      icon: Eye },
+  { label: 'Kesalahan Pilihan Raya',  href: '/katalog?bahagian=pemantauan-operasi',      icon: Eye },
   { label: 'Pemerhati Pilihan Raya',  href: '/katalog?bahagian=penilaian-pemerhati',     icon: Globe2 },
 ];
 

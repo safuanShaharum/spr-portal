@@ -145,7 +145,7 @@ export default function ElectionModal({ row, sheetSlug, onClose }: Props) {
     rows.push(["Jenis", "Negeri", "Pilihan Raya", "Tahun", "Kawasan"].map(esc).join(","));
     rows.push([jenis, negeri, namaPR, tahun, kawasan].map(esc).join(","));
     rows.push("");
-    rows.push(["Pemilih Berdaftar", "Jumlah Mengundi", "Peratusan Keluar (%)", "Undi Rosak / Tidak Sah", "Majoriti"].map(esc).join(","));
+    rows.push(["Pemilih Berdaftar", "Jumlah Mengundi", "Peratusan Keluar (%)", "Undi Ditolak / Tidak Sah", "Majoriti"].map(esc).join(","));
     rows.push([pemilihBerdaftar, jumlahMengundi, peratusanKeluar, undiDitolak, majoriti].map(esc).join(","));
     rows.push("");
     rows.push(["Kedudukan", "Calon", "Parti", "Nama Parti Penuh", "Undi", "Peratusan (%)", "Status"].map(esc).join(","));
@@ -281,7 +281,7 @@ export default function ElectionModal({ row, sheetSlug, onClose }: Props) {
                     })}
                     {undiDitolak > 0 && (
                       <div className="p-4 border-t border-spr-border-light flex items-center justify-between">
-                        <span className="text-sm text-spr-text-muted">Undi Rosak / Tidak Sah</span>
+                        <span className="text-sm text-spr-text-muted">Undi Ditolak / Tidak Sah</span>
                         <span className="text-sm font-semibold text-spr-text-secondary">{undiDitolak.toLocaleString()}</span>
                       </div>
                     )}

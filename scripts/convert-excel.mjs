@@ -122,6 +122,24 @@ function trimKeys(rows) {
   });
 }
 
+function computeYearRange(data, columns) {
+  const yearCol = columns.find((c) => /tahun/i.test(c));
+  if (!yearCol) return null;
+  let min = Infinity;
+  let max = -Infinity;
+  for (const row of data) {
+    const raw = String(row[yearCol] ?? '').trim();
+    const m = raw.match(/(\d{4})/);
+    if (!m) continue;
+    const y = parseInt(m[1], 10);
+    if (y < 1900 || y > 2100) continue;
+    if (y < min) min = y;
+    if (y > max) max = y;
+  }
+  if (!isFinite(min) || !isFinite(max)) return null;
+  return min === max ? `${min}` : `${min}–${max}`;
+}
+
 async function convertSheet(workbook, sheetName) {
   const sheet = workbook.Sheets[sheetName];
   if (!sheet) throw new Error(`Sheet '${sheetName}' not found in workbook`);
@@ -136,12 +154,14 @@ async function convertSheet(workbook, sheetName) {
 
   const sizeBytes = Buffer.byteLength(json, 'utf8');
   const columns = data.length > 0 ? Object.keys(data[0]) : [];
+  const yearRange = data.length > 0 ? computeYearRange(data, columns) : null;
 
   return {
     slug,
     name: sheetName,
     rows: data.length,
     columns,
+    yearRange,
     size_kb: Math.round(sizeBytes / 1024),
     size_bytes: sizeBytes,
     isEmpty: data.length === 0,
@@ -195,6 +215,7 @@ async function main() {
         name: meta.name,
         rows: meta.rows,
         columns: meta.columns,
+        yearRange: meta.yearRange,
         size_kb: meta.size_kb,
       });
       console.log(`  ✓ ${label} ${rowsStr} rows  ${sizeStr}`);

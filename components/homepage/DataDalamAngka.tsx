@@ -104,7 +104,7 @@ export async function DataDalamAngka() {
                 </div>
               </div>
 
-              <div className="display-serif text-2xl italic mb-3 text-white">rakyat Malaysia yang layak</div>
+              <div className="display-serif text-2xl italic mb-3 text-white">rakyat Malaysia yang layak pada PRU Ke-15</div>
               <p className="text-white/60 max-w-md leading-relaxed text-sm mb-6">
                 Peningkatan 40% dari PRU-14 berikutan Undi18 yang menurunkan umur kelayakan dari 21 ke 18 tahun.
               </p>

@@ -24,7 +24,7 @@ export default function InfoCard({ tarikh, pm, kerajaan, majoriti, jumlahPemilih
     ...(jumlahPemilih ? [{ label: "Jumlah Pemilih", value: fmtNum(jumlahPemilih) }] : []),
     ...(peratusanKeluar ? [{ label: "Peratusan Keluar", value: `${peratusanKeluar}%` }] : []),
     ...(jumlahCalon ? [{ label: "Jumlah Calon", value: jumlahCalon.toLocaleString() }] : []),
-    ...(undiRosak != null && undiRosak > 0 ? [{ label: "Undi Rosak", value: undiRosak.toLocaleString() }] : []),
+    ...(undiRosak != null && undiRosak > 0 ? [{ label: "Undi Ditolak", value: undiRosak.toLocaleString() }] : []),
   ];
 
   return (

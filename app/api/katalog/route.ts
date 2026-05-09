@@ -149,21 +149,23 @@ export async function GET(req: NextRequest) {
 
     // --- Aggregate undi-pos ---
     if (sheetSlug === "undi-pos") {
-      const groups = new Map<string, { pr: string; negeri: string; parlimen: string; dun: string; a: number; b: number; c: number }>();
+      const groups = new Map<string, { tahun: string; pr: string; negeri: string; parlimen: string; dun: string; a: number; b: number; c: number }>();
       for (const row of rows) {
+        const tahun = String(row["TahunPilihanraya"] || row["TAHUN PILIHAN RAYA"] || row["TAHUN"] || "");
         const pr = String(row["Nama Pilihan Raya"] || "");
         const negeri = String(row["NegeriPemohon"] || "");
         const parlimen = String(row["ParlimenPemohon"] || "");
         const dun = String(row["DunPemohon"] || "");
         const kat = String(row["KategoriUndiPos"] || "");
-        const key = `${pr}||${negeri}||${parlimen}||${dun}`;
+        const key = `${tahun}||${pr}||${negeri}||${parlimen}||${dun}`;
         let g = groups.get(key);
-        if (!g) { g = { pr, negeri, parlimen, dun, a: 0, b: 0, c: 0 }; groups.set(key, g); }
+        if (!g) { g = { tahun, pr, negeri, parlimen, dun, a: 0, b: 0, c: 0 }; groups.set(key, g); }
         if (kat === "1A") g.a++;
         else if (kat === "1B") g.b++;
         else if (kat === "1C") g.c++;
       }
       rows = Array.from(groups.values()).map((g) => ({
+        "TAHUN PILIHAN RAYA": g.tahun,
         "Nama Pilihan Raya": g.pr,
         "NEGERI": g.negeri,
         "PARLIMEN": g.parlimen,

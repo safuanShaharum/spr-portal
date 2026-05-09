@@ -12,7 +12,7 @@ import DocumentGrid from "@/components/katalog/DocumentGrid";
 import EmptyState from "@/components/katalog/EmptyState";
 import ElectionModal from "@/components/katalog/ElectionModal";
 import DetailModal from "@/components/katalog/DetailModal";
-import { getCatalogData } from "@/lib/catalog";
+import { getCatalogData, getCatalogIndex } from "@/lib/catalog";
 import { PageHeader } from "@/components/PageHeader";
 
 type Row = Record<string, unknown>;
@@ -32,6 +32,15 @@ const CATALOG_SLUG_MAP: Record<string, string> = {
   "kesalahan": "bil-kesalahan-pr",
   "pemerhati": "bil-pemerhati",
   "program-ve": "bil-program-ve",
+};
+
+// Maps every TabDef.sheetSlug → _index.json slug for metadata lookup
+// (yearRange, etc). Includes API-served sheets that are not in CATALOG_SLUG_MAP.
+const INDEX_SLUG_MAP: Record<string, string> = {
+  ...CATALOG_SLUG_MAP,
+  "daftar-pemilih": "daftar-pemilih-induk-2008-2025",
+  "dppr": "dppr-pru-prn-prk-2008-keatas",
+  "undi-pos": "statistik-undi-pos",
 };
 
 // `bil-pemerhati` ships as wide rows (org names as columns). Mirrors the pivot
@@ -173,6 +182,20 @@ function KatalogContent() {
       }
     }
   }, [urlBahagian]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Year-range metadata fetched once from /data/_index.json
+  const [yearRangeMap, setYearRangeMap] = useState<Record<string, string>>({});
+  useEffect(() => {
+    getCatalogIndex()
+      .then((idx) => {
+        const m: Record<string, string> = {};
+        for (const entry of idx) {
+          if (entry.yearRange) m[entry.slug] = entry.yearRange;
+        }
+        setYearRangeMap(m);
+      })
+      .catch(() => {/* tooltip just won't show; non-blocking */});
+  }, []);
 
   // API data state
   const [apiData, setApiData] = useState<Record<string, unknown>[]>([]);
@@ -414,7 +437,10 @@ function KatalogContent() {
             {/* Tabs */}
             {bahagian.tabs.length > 1 && (
               <TabBar
-                tabs={bahagian.tabs.map((t) => t.label)}
+                tabs={bahagian.tabs.map((t) => {
+                  const indexSlug = t.sheetSlug ? INDEX_SLUG_MAP[t.sheetSlug] : undefined;
+                  return { label: t.label, yearRange: indexSlug ? yearRangeMap[indexSlug] : undefined };
+                })}
                 activeIndex={activeTabIndex}
                 onSelect={handleTabChange}
               />

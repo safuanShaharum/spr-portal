@@ -57,7 +57,7 @@ const CATEGORIES: CategoryData[] = [
       count: 4,
     },
     datasets: [
-      "Senarai Pusat Mengundi Mengikut DUN",
+      "Statistik PM/PPC/PPRU Mengikut DUN",
       "Peta Sempadan Parlimen (KMZ)",
       "Statistik KSP Mengikut Negeri",
     ],
@@ -94,7 +94,7 @@ const CATEGORIES: CategoryData[] = [
   },
   {
     slug: "pemantauan-operasi",
-    label: "Pemantauan & Operasi",
+    label: "Kesalahan Pilihan Raya",
     color: "#00D4AA",
     featured: {
       title: "Laporan Aduan Pilihan Raya",

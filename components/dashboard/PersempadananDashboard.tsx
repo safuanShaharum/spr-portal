@@ -98,7 +98,7 @@ export default function PersempadananDashboard() {
 
       <div className="bg-white border border-spr-border rounded-xl overflow-hidden">
         <div className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 border-b border-spr-border-light">
-          <h3 className="text-base font-semibold text-spr-navy">Senarai Pusat Mengundi, PPC & PPRU</h3>
+          <h3 className="text-base font-semibold text-spr-navy">Statistik PM/PPC/PPRU</h3>
           <div className="flex gap-2">
             <select value={filterTahun} onChange={(e) => { setFilterTahun(e.target.value); setPage(1); }} className="bg-white border border-spr-border rounded-lg px-2.5 py-1.5 text-xs outline-none cursor-pointer">
               <option value="">Semua Tahun</option>

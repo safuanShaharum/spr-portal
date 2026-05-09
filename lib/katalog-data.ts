@@ -32,6 +32,7 @@ export interface TabDef {
   filters?: FilterDef[];
   documents?: { title: string; year?: string; status?: string }[];
   emptyMessage?: string;
+  yearRange?: string;
 }
 
 export interface BahagianDef {
@@ -67,6 +68,7 @@ const TAB_PRU_PARLIMEN: TabDef = {
     { key: "negeri", label: "Negeri", options: [] },
   ],
   columns: [
+    { key: "TAHUN PILIHAN RAYA", header: "TAHUN", type: "string" },
     { key: "PARLIMEN", header: "KAWASAN", type: "string" },
     { key: "NEGERI", header: "NEGERI", type: "string" },
     { key: "NAMA ATAS KERTAS UNDI", header: "CALON MENANG", type: "string" },
@@ -87,6 +89,7 @@ const TAB_PRU_DUN: TabDef = {
     { key: "negeri", label: "Negeri", options: [] },
   ],
   columns: [
+    { key: "TAHUN PILIHAN RAYA", header: "TAHUN", type: "string" },
     { key: "DEWAN UNDANGAN NEGERI", header: "KAWASAN (DUN)", type: "string" },
     { key: "PARLIMEN", header: "PARLIMEN", type: "string" },
     { key: "NEGERI", header: "NEGERI", type: "string" },
@@ -108,6 +111,7 @@ const TAB_PRK: TabDef = {
     { key: "negeri", label: "Negeri", options: [] },
   ],
   columns: [
+    { key: "TAHUN PILIHAN RAYA", header: "TAHUN", type: "string" },
     { key: "NamaPR", header: "PILIHAN RAYA", type: "string" },
     { key: "PARLIMEN", header: "KAWASAN", type: "string" },
     { key: "NEGERI", header: "NEGERI", type: "string" },
@@ -127,6 +131,7 @@ const TAB_UNDI_POS: TabDef = {
     { key: "negeri", label: "Negeri", options: [] },
   ],
   columns: [
+    { key: "TAHUN PILIHAN RAYA", header: "TAHUN", type: "string" },
     { key: "Nama Pilihan Raya", header: "NAMA PILIHAN RAYA", type: "string" },
     { key: "NEGERI", header: "NEGERI", type: "string" },
     { key: "PARLIMEN", header: "PARLIMEN", type: "string" },
@@ -135,26 +140,6 @@ const TAB_UNDI_POS: TabDef = {
     { key: "KAT. 1B", header: "KAT. 1B", type: "number" },
     { key: "KAT. 1C", header: "KAT. 1C", type: "number" },
     { key: "JUMLAH", header: "JUMLAH", type: "number" },
-  ],
-};
-
-const TAB_PENYATA_BELANJA: TabDef = {
-  label: "Penyata Belanja Calon",
-  type: "table",
-  sheetSlug: "penyata-belanja",
-  filters: [
-    { key: "pilihanRaya", label: "Pilihan Raya", options: [] },
-    { key: "negeri", label: "Negeri", options: [] },
-  ],
-  columns: [
-    { key: "PILIHAN RAYA", header: "PILIHAN RAYA", type: "string" },
-    { key: "NEGERI", header: "NEGERI", type: "string" },
-    { key: "PARLIMEN", header: "PARLIMEN", type: "string" },
-    { key: "DUN", header: "DUN", type: "string" },
-    { key: "NAMA CALON PILIHAN RAYA", header: "NAMA CALON", type: "string" },
-    { key: "NAMA EJEN PILIHAN RAYA", header: "NAMA EJEN", type: "string" },
-    { key: "AMAUN/ JUMLAH DANA DITERIMA (RM)", header: "JUMLAH DANA (RM)", type: "currency" },
-    { key: "JUMLAH PERBELANJAAN (RM)", header: "JUMLAH PERBELANJAAN (RM)", type: "currency" },
   ],
 };
 
@@ -167,6 +152,7 @@ const TAB_NOTIS_WARTA: TabDef = {
     { key: "negeri", label: "Negeri", options: [] },
   ],
   columns: [
+    { key: "TAHUN PILIHAN RAYA", header: "TAHUN", type: "string" },
     { key: "PILIHAN RAYA", header: "PILIHAN RAYA", type: "string" },
     { key: "NEGERI", header: "NEGERI", type: "string" },
     { key: "PARLIMEN", header: "PARLIMEN", type: "string" },
@@ -187,7 +173,7 @@ const TAB_SIMBOL_PARTI: TabDef = {
 // ====================================================================
 
 const TAB_DPI: TabDef = {
-  label: "Statistik Pemilih Berdaftar (DPI)",
+  label: "Statistik Daftar Pemilih Induk (DPI)",
   type: "table",
   sheetSlug: "daftar-pemilih",
   filters: [
@@ -217,7 +203,7 @@ const TAB_DPI: TabDef = {
 };
 
 const TAB_DPPR: TabDef = {
-  label: "Statistik Pemilih Berdaftar (DPPR)",
+  label: "Statistik Daftar Pemilih Pilihan Raya (DPPR)",
   type: "table",
   sheetSlug: "dppr",
   filters: [
@@ -262,7 +248,7 @@ const TAB_SENARAI_BPR: TabDef = {
 };
 
 const TAB_PUSAT_MENGUNDI: TabDef = {
-  label: "Senarai Pusat Mengundi",
+  label: "Statistik PM/PPC/PPRU",
   type: "table",
   sheetSlug: "pusat-mengundi",
   filters: [
@@ -270,6 +256,7 @@ const TAB_PUSAT_MENGUNDI: TabDef = {
     { key: "negeri", label: "Negeri", options: [] },
   ],
   columns: [
+    { key: "TAHUN PILIHAN RAYA", header: "TAHUN", type: "string" },
     { key: "PILIHAN RAYA", header: "PILIHAN RAYA", type: "string" },
     { key: "NEGERI", header: "NEGERI", type: "string" },
     { key: "PARLIMEN", header: "PARLIMEN", type: "string" },
@@ -277,16 +264,6 @@ const TAB_PUSAT_MENGUNDI: TabDef = {
     { key: "BIL. PUSAT MENGUNDI", header: "BIL. PUSAT MENGUNDI", type: "number" },
     { key: "BIL. PUSAT PENAMAAN CALON (PPC)", header: "BIL. PPC", type: "number" },
     { key: "BIL. PUSAT PERJUMLAHAN RASMI UNDI (PPRU)", header: "BIL. PPRU", type: "number" },
-  ],
-};
-
-const TAB_LAPORAN_KSP: TabDef = {
-  label: "Laporan KSP",
-  type: "grid-document",
-  documents: [
-    { title: "Buku Laporan KSP Tanah Melayu Kali Ke-6", status: "Akan datang" },
-    { title: "Buku Laporan KSP Sabah Kali Ke-6", status: "Akan datang" },
-    { title: "Buku Laporan KSP Sarawak Kali Ke-6", status: "Akan datang" },
   ],
 };
 
@@ -313,6 +290,7 @@ const TAB_PETISYEN: TabDef = {
     { key: "negeri", label: "Negeri", options: [] },
   ],
   columns: [
+    { key: "TAHUN PILIHAN RAYA", header: "TAHUN", type: "string" },
     { key: "PILIHAN RAYA", header: "PILIHAN RAYA", type: "string" },
     { key: "NEGERI", header: "NEGERI", type: "string" },
     { key: "PARLIMEN", header: "PARLIMEN", type: "string" },
@@ -331,6 +309,7 @@ const TAB_BAJET: TabDef = {
     { key: "negeri", label: "Negeri", options: [] },
   ],
   columns: [
+    { key: "TAHUN PILIHAN RAYA", header: "TAHUN", type: "string" },
     { key: "PILIHAN RAYA", header: "PILIHAN RAYA", type: "string" },
     { key: "NEGERI", header: "NEGERI", type: "string" },
     { key: "PARLIMEN", header: "PARLIMEN", type: "string" },
@@ -348,6 +327,7 @@ const TAB_KESALAHAN: TabDef = {
     { key: "negeri", label: "Negeri", options: [] },
   ],
   columns: [
+    { key: "TAHUN PILIHAN RAYA", header: "TAHUN", type: "string" },
     { key: "PILIHAN RAYA", header: "PILIHAN RAYA", type: "string" },
     { key: "NEGERI", header: "NEGERI", type: "string" },
     { key: "PARLIMEN", header: "PARLIMEN", type: "string" },
@@ -367,6 +347,7 @@ const TAB_PEMERHATI: TabDef = {
     { key: "negeri", label: "Negeri", options: [] },
   ],
   columns: [
+    { key: "TAHUN PILIHAN RAYA", header: "TAHUN", type: "string" },
     { key: "PILIHAN RAYA", header: "PILIHAN RAYA", type: "string" },
     { key: "NEGERI", header: "NEGERI", type: "string" },
     { key: "PARLIMEN", header: "PARLIMEN", type: "string" },
@@ -376,7 +357,7 @@ const TAB_PEMERHATI: TabDef = {
 };
 
 const TAB_VE: TabDef = {
-  label: "Bilangan Program VE",
+  label: "Bilangan Program Pendidikan Pengundi",
   type: "table",
   sheetSlug: "program-ve",
   filters: [{ key: "tahun", label: "Tahun", options: [] }],
@@ -397,11 +378,9 @@ export const BAHAGIAN_LIST: BahagianDef[] = [
   {
     slug: "penjalanan-pilihan-raya",
     label: "Penjalanan Pilihan Raya",
-    count: 9,
+    count: 7,
     tabs: [TAB_PRU_PARLIMEN, TAB_PRU_DUN, TAB_PRK, TAB_UNDI_POS,
       { label: "Pengundi Awal", type: "empty", sheetSlug: "pengundi-awal", emptyMessage: "Data belum tersedia" },
-      TAB_PENYATA_BELANJA,
-      { label: "Bilangan Petugas", type: "empty", sheetSlug: "petugas", emptyMessage: "Data belum tersedia" },
       TAB_NOTIS_WARTA, TAB_SIMBOL_PARTI],
   },
   {
@@ -413,10 +392,9 @@ export const BAHAGIAN_LIST: BahagianDef[] = [
   {
     slug: "persempadanan",
     label: "Persempadanan",
-    count: 5,
-    tabs: [TAB_SENARAI_BPR, TAB_PUSAT_MENGUNDI, TAB_LAPORAN_KSP,
-      { label: "Statistik Pertambahan BPR", type: "empty", emptyMessage: "Data akan datang" },
-      { label: "Pelan Persempadanan BPR", type: "empty", emptyMessage: "Data akan datang" }],
+    count: 3,
+    tabs: [TAB_SENARAI_BPR, TAB_PUSAT_MENGUNDI,
+      { label: "Statistik Pertambahan BPR", type: "empty", emptyMessage: "Data akan datang" }],
   },
   {
     slug: "perundangan",
@@ -432,19 +410,19 @@ export const BAHAGIAN_LIST: BahagianDef[] = [
   },
   {
     slug: "pemantauan-operasi",
-    label: "Pemantauan & Operasi",
-    count: 2,
-    tabs: [TAB_KESALAHAN, { label: "Soalan Parlimen", type: "empty", emptyMessage: "Data akan datang" }],
+    label: "Kesalahan Pilihan Raya",
+    count: 1,
+    tabs: [TAB_KESALAHAN],
   },
   {
     slug: "penilaian-pemerhati",
-    label: "Penilaian Pemerhati",
+    label: "Pemerhati Pilihan Raya",
     count: 1,
     tabs: [TAB_PEMERHATI],
   },
   {
     slug: "akademi-pilihan-raya",
-    label: "Akademi Pilihan Raya",
+    label: "Pendidikan Pengundi",
     count: 1,
     tabs: [TAB_VE],
   },

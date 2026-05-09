@@ -6,10 +6,10 @@ const SECTIONS = [
   { slug: "peta-persempadanan", title: "Peta Persempadanan", subtitle: "Visualisasi sempadan kawasan pilihan raya", ready: false },
   { slug: "parti-politik", title: "Parti Politik", subtitle: "Senarai parti berdaftar dan simbol", ready: false },
   { slug: "pemerhati", title: "Pemerhati", subtitle: "Bilangan pemerhati mengikut pertubuhan", ready: false },
-  { slug: "akademi", title: "Akademi Pilihan Raya", subtitle: "Bilangan program pendidikan pengundi dan peserta mengikut tahun", ready: false },
+  { slug: "akademi", title: "Pendidikan Pengundi", subtitle: "Bilangan program pendidikan pengundi dan peserta mengikut tahun", ready: false },
   { slug: "persempadanan", title: "Persempadanan", subtitle: "Bil. PM, PPC, PPRU mengikut tahun", ready: false },
   { slug: "perundangan", title: "Perundangan", subtitle: "Bilangan petisyen mengikut tahun", ready: false },
-  { slug: "pemantauan", title: "Pemantauan & Operasi", subtitle: "Bilangan kesalahan PR mengikut kategori", ready: false },
+  { slug: "pemantauan", title: "Kesalahan Pilihan Raya", subtitle: "Bilangan kesalahan PR mengikut kategori", ready: false },
 ];
 
 interface Props {

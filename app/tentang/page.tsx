@@ -68,8 +68,8 @@ export default function TentangPage() {
           <p>
             Portal ini mengandungi lapan kategori utama data pilihan raya
             termasuk keputusan PRU/PRK, pendaftaran pemilih, persempadanan
-            kawasan, perundangan, pentadbiran, pemantauan operasi, penilaian
-            pemerhati dan program pendidikan pengundi Akademi Pilihan Raya.
+            kawasan, perundangan, pentadbiran, kesalahan pilihan raya, pemerhati
+            pilihan raya dan program pendidikan pengundi.
             Rujuk{" "}
             <Link href="/katalog" className="text-spr-purple hover:underline">
               Katalog Data
