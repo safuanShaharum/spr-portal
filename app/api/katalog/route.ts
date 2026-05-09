@@ -9,12 +9,14 @@ const WP_API = process.env.NEXT_PUBLIC_WP_API_URL || "http://spr-open-data.local
 
 // Most sheets have moved to pre-converted JSON in /public/data/. Only
 // oversized sheets remain here pending the chunking strategy:
-//   · daftar-pemilih (~107k rows / 42 MB raw JSON)
+//   · daftar-pemilih (~107k rows / 42 MB raw JSON) — DPI
+//   · dppr (~123k rows) — DPPR per-pilihanraya snapshots
 //   · undi-pos (~100k rows; this route also performs server-side aggregation)
 // All other catalog consumers now call lib/catalog.ts → /data/{slug}.json.
 const SHEET_MAP: Record<string, string> = {
   "undi-pos": "Statistik Undi Pos",
   "daftar-pemilih": "Daftar Pemilih Induk 2008-2025",
+  "dppr": "DPPR PRU PRN PRK 2008 & KEATAS",
 };
 
 /* ------------------------------------------------------------------ */
