@@ -17,10 +17,12 @@ interface PageHeaderProps {
   breadcrumb: BreadcrumbCrumb[];
   title: string;
   subtitle?: string;
+  datasetLabel?: string;
+  datasetDescription?: string;
   filterPills?: FilterPill[];
 }
 
-export function PageHeader({ breadcrumb, title, subtitle, filterPills }: PageHeaderProps) {
+export function PageHeader({ breadcrumb, title, subtitle, datasetLabel, datasetDescription, filterPills }: PageHeaderProps) {
   return (
     <section
       className="relative bg-spr-purple/5 text-spr-ink border-b border-spr-ink/10"
@@ -57,10 +59,15 @@ export function PageHeader({ breadcrumb, title, subtitle, filterPills }: PageHea
           {title}
         </h1>
 
-        {subtitle && (
-          <p className="mt-2 max-w-[560px] text-sm text-spr-ink/65 leading-relaxed">
-            {subtitle}
+        {datasetDescription && (
+          <p className="mt-2 text-sm text-spr-ink/70 leading-relaxed">
+            {datasetLabel && <span className="font-semibold text-spr-ink">{datasetLabel}: </span>}
+            {datasetDescription}
           </p>
+        )}
+
+        {subtitle && (
+          <p className="mt-1.5 text-xs text-spr-ink/55 leading-relaxed">{subtitle}</p>
         )}
 
         {filterPills && filterPills.length > 0 && (

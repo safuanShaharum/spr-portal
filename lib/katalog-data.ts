@@ -33,6 +33,7 @@ export interface TabDef {
   documents?: { title: string; year?: string; status?: string }[];
   emptyMessage?: string;
   yearRange?: string;
+  description?: string;
 }
 
 export interface BahagianDef {
@@ -59,6 +60,7 @@ export const STATUS_COLORS: Record<string, string> = {
 
 const TAB_PRU_PARLIMEN: TabDef = {
   label: "Keputusan PRU (Parlimen)",
+  description: "Keputusan rasmi Pilihan Raya Umum bagi setiap kerusi parlimen termasuk calon menang, parti, jumlah undi dan majoriti.",
   type: "table",
   modalType: "election",
   sheetSlug: "keputusan-pru",
@@ -80,6 +82,7 @@ const TAB_PRU_PARLIMEN: TabDef = {
 
 const TAB_PRU_DUN: TabDef = {
   label: "Keputusan PRU (DUN)",
+  description: "Keputusan rasmi Pilihan Raya Umum bagi setiap kerusi Dewan Undangan Negeri termasuk calon menang, parti dan majoriti.",
   type: "table",
   modalType: "election",
   sheetSlug: "keputusan-dun",
@@ -102,6 +105,7 @@ const TAB_PRU_DUN: TabDef = {
 
 const TAB_PRK: TabDef = {
   label: "Keputusan PRK",
+  description: "Keputusan Pilihan Raya Kecil di kawasan parlimen dan DUN termasuk calon menang, parti dan majoriti.",
   type: "table",
   modalType: "election",
   sheetSlug: "keputusan-prk",
@@ -124,6 +128,7 @@ const TAB_PRK: TabDef = {
 
 const TAB_UNDI_POS: TabDef = {
   label: "Pengundi Pos",
+  description: "Bilangan pengundi pos mengikut kategori 1A (Tentera & Polis), 1B (Petugas PR) dan 1C (Pengundi Tidak Hadir).",
   type: "table",
   sheetSlug: "undi-pos",
   filters: [
@@ -145,6 +150,7 @@ const TAB_UNDI_POS: TabDef = {
 
 const TAB_NOTIS_WARTA: TabDef = {
   label: "Notis Warta Belanja PR",
+  description: "Senarai notis warta penyerahan penyata belanja calon dan ejen pilihan raya mengikut kawasan.",
   type: "table",
   sheetSlug: "notis-warta",
   filters: [
@@ -165,6 +171,7 @@ const TAB_NOTIS_WARTA: TabDef = {
 
 const TAB_SIMBOL_PARTI: TabDef = {
   label: "Simbol Parti Politik",
+  description: "Senarai parti politik berdaftar di Malaysia beserta simbol rasmi.",
   type: "grid-parti",
 };
 
@@ -174,6 +181,7 @@ const TAB_SIMBOL_PARTI: TabDef = {
 
 const TAB_DPI: TabDef = {
   label: "Statistik Daftar Pemilih Induk (DPI)",
+  description: "Bilangan pemilih berdaftar dalam Daftar Pemilih Induk mengikut negeri, parlimen, DUN, daerah mengundi, kumpulan umur dan jantina.",
   type: "table",
   sheetSlug: "daftar-pemilih",
   filters: [
@@ -204,6 +212,7 @@ const TAB_DPI: TabDef = {
 
 const TAB_DPPR: TabDef = {
   label: "Statistik Daftar Pemilih Pilihan Raya (DPPR)",
+  description: "Bilangan pemilih berdaftar dalam Daftar Pemilih Pilihan Raya mengikut negeri, parlimen, DUN, daerah mengundi, kumpulan umur dan jantina untuk setiap pilihan raya.",
   type: "table",
   sheetSlug: "dppr",
   filters: [
@@ -236,6 +245,7 @@ const TAB_DPPR: TabDef = {
 
 const TAB_SENARAI_BPR: TabDef = {
   label: "Senarai BPR",
+  description: "Senarai Bahagian Pilihan Raya (BPR) seluruh Malaysia mengikut negeri, parlimen, DUN dan daerah mengundi.",
   type: "table",
   sheetSlug: "senarai-bpr",
   filters: [{ key: "negeri", label: "Negeri", options: [] }],
@@ -249,6 +259,7 @@ const TAB_SENARAI_BPR: TabDef = {
 
 const TAB_PUSAT_MENGUNDI: TabDef = {
   label: "Statistik PM/PPC/PPRU",
+  description: "Bilangan Pusat Mengundi (PM), Pusat Penamaan Calon (PPC) dan Pusat Penjumlahan Rasmi Undi (PPRU) mengikut tahun dan kawasan.",
   type: "table",
   sheetSlug: "pusat-mengundi",
   filters: [
@@ -269,6 +280,7 @@ const TAB_PUSAT_MENGUNDI: TabDef = {
 
 const TAB_PERUNTUKAN: TabDef = {
   label: "Peruntukan Undang-undang",
+  description: "Akta dan peraturan-peraturan yang mengawal selia pilihan raya di Malaysia.",
   type: "grid-document",
   documents: [
     { title: "Perlembagaan Persekutuan", year: "Cetakan Semula 2020" },
@@ -283,6 +295,7 @@ const TAB_PERUNTUKAN: TabDef = {
 
 const TAB_PETISYEN: TabDef = {
   label: "Petisyen Pilihan Raya",
+  description: "Bilangan petisyen pilihan raya yang difailkan di mahkamah mengikut tahun, kawasan dan jenis pilihan raya.",
   type: "table",
   sheetSlug: "petisyen",
   filters: [
@@ -302,6 +315,7 @@ const TAB_PETISYEN: TabDef = {
 
 const TAB_BAJET: TabDef = {
   label: "Bajet Pilihan Raya",
+  description: "Bajet keseluruhan pilihan raya mengikut tahun, negeri dan kawasan.",
   type: "table",
   sheetSlug: "bajet",
   filters: [
@@ -320,6 +334,7 @@ const TAB_BAJET: TabDef = {
 
 const TAB_KESALAHAN: TabDef = {
   label: "Bilangan Kesalahan Pilihan Raya",
+  description: "Bilangan kesalahan pilihan raya mengikut kategori (ceramah tanpa permit, bahan kempen, hari mengundi) dan kawasan.",
   type: "table",
   sheetSlug: "kesalahan",
   filters: [
@@ -340,6 +355,7 @@ const TAB_KESALAHAN: TabDef = {
 
 const TAB_PEMERHATI: TabDef = {
   label: "Bilangan Pemerhati",
+  description: "Bilangan pemerhati pilihan raya dari pertubuhan tempatan dan antarabangsa mengikut tahun dan organisasi.",
   type: "table",
   sheetSlug: "pemerhati",
   filters: [
@@ -358,6 +374,7 @@ const TAB_PEMERHATI: TabDef = {
 
 const TAB_VE: TabDef = {
   label: "Bilangan Program Pendidikan Pengundi",
+  description: "Bilangan program pendidikan pengundi (Voter Education) mengikut institusi pendidikan dan bilangan peserta.",
   type: "table",
   sheetSlug: "program-ve",
   filters: [{ key: "tahun", label: "Tahun", options: [] }],
@@ -380,7 +397,7 @@ export const BAHAGIAN_LIST: BahagianDef[] = [
     label: "Penjalanan Pilihan Raya",
     count: 7,
     tabs: [TAB_PRU_PARLIMEN, TAB_PRU_DUN, TAB_PRK, TAB_UNDI_POS,
-      { label: "Pengundi Awal", type: "empty", sheetSlug: "pengundi-awal", emptyMessage: "Data belum tersedia" },
+      { label: "Pengundi Awal", description: "Bilangan pengundi awal mengikut kategori dan kawasan.", type: "empty", sheetSlug: "pengundi-awal", emptyMessage: "Data belum tersedia" },
       TAB_NOTIS_WARTA, TAB_SIMBOL_PARTI],
   },
   {
@@ -394,7 +411,7 @@ export const BAHAGIAN_LIST: BahagianDef[] = [
     label: "Persempadanan",
     count: 3,
     tabs: [TAB_SENARAI_BPR, TAB_PUSAT_MENGUNDI,
-      { label: "Statistik Pertambahan BPR", type: "empty", emptyMessage: "Data akan datang" }],
+      { label: "Statistik Pertambahan BPR", description: "Statistik pertambahan Bahagian Pilihan Raya hasil persempadanan semula mengikut tahun.", type: "empty", emptyMessage: "Data akan datang" }],
   },
   {
     slug: "perundangan",

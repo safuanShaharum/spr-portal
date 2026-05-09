@@ -398,6 +398,8 @@ function KatalogContent() {
         ]}
         title={bahagian.label}
         subtitle={`${bahagian.count} set data tersedia dalam bahagian ini`}
+        datasetLabel={tab.description ? tab.label : undefined}
+        datasetDescription={tab.description}
       />
 
       <div className="px-4 sm:px-6 lg:px-10 py-6">
