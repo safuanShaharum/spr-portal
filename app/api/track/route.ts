@@ -5,7 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 // expects params `pa` (path), `po` (post_id), optionally `r` (referrer URL).
 // Server-to-server avoids CORS + lets us forward real client UA so Koko's bot
 // filter doesn't trip.
-const WP_BASE = (process.env.NEXT_PUBLIC_KOKO_WP_BASE || "https://cmsodspr.sawangville.dev").replace(/\/+$/, "");
+const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || "https://cmsodspr.sawangville.dev/wp-json").replace(/\/+$/, "");
+const WP_BASE = WP_API.replace(/\/wp-json$/, "");
 const KOKO_URL = `${WP_BASE}/koko-analytics-collect.php`;
 
 export const runtime = "edge";

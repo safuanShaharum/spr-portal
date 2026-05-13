@@ -22,20 +22,21 @@ interface FilterMeta {
   pru_numbers: number[];
 }
 
-const TABS = [
-  { slug: 'pru',       label: 'Pilihan Raya Umum' },
-  { slug: 'dun_dn_du', label: 'PRU DUN/DN/DU' },
-  { slug: 'prk',       label: 'Pilihan Raya Kecil' },
-  { slug: 'pemerhati', label: 'Pemerhati' },
-  { slug: 'kesalahan', label: 'Kesalahan Pilihan Raya' },
-] as const;
+interface TabDef {
+  slug: string;
+  label: string;
+  count: number;
+}
 
-type TabSlug = typeof TABS[number]['slug'];
+// Preferred tab order — slugs listed first appear first. Slugs not in this
+// list fall to the end in API-returned order. Adjust to reorder tabs.
+const TAB_ORDER = ['pru', 'dun_dn_du', 'prk', 'pemerhati', 'kesalahan', 'persempadanan'];
 
 const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || 'http://spr-open-data.local/wp-json').replace(/\/$/, '');
 
 export default function InfografikPage() {
-  const [activeTab, setActiveTab] = useState<TabSlug>('pru');
+  const [tabs, setTabs] = useState<TabDef[]>([]);
+  const [activeTab, setActiveTab] = useState<string>('');
   const [items, setItems] = useState<InfografikItem[]>([]);
   const [filters, setFilters] = useState<FilterMeta>({ years: [], pru_numbers: [] });
   const [loading, setLoading] = useState(true);
@@ -43,7 +44,28 @@ export default function InfografikPage() {
   const [selectedPru, setSelectedPru] = useState<number | null>(null);
   const [lightboxImage, setLightboxImage] = useState<InfografikItem | null>(null);
 
+  // Fetch tab list once from taxonomy, sort by preferred order
   useEffect(() => {
+    fetch(`${WP_API}/spr/v1/infografik/categories`)
+      .then(r => r.json())
+      .then((data: TabDef[]) => {
+        if (!Array.isArray(data) || data.length === 0) return;
+        // Hide empty categories so the tab bar only surfaces tabs with content.
+        const nonEmpty = data.filter((t) => (t.count ?? 0) > 0);
+        if (nonEmpty.length === 0) return;
+        const orderIdx = (s: string) => {
+          const i = TAB_ORDER.indexOf(s);
+          return i === -1 ? TAB_ORDER.length : i;
+        };
+        const sorted = [...nonEmpty].sort((a, b) => orderIdx(a.slug) - orderIdx(b.slug));
+        setTabs(sorted);
+        setActiveTab(sorted[0].slug);
+      })
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (!activeTab) return;
     fetch(`${WP_API}/spr/v1/infografik/filters?kategori=${activeTab}`)
       .then(r => r.json())
       .then(setFilters)
@@ -51,6 +73,7 @@ export default function InfografikPage() {
   }, [activeTab]);
 
   useEffect(() => {
+    if (!activeTab) return;
     setLoading(true);
     const params = new URLSearchParams({ kategori: activeTab });
     if (selectedYear) params.set('tahun', String(selectedYear));
@@ -68,7 +91,7 @@ export default function InfografikPage() {
       });
   }, [activeTab, selectedYear, selectedPru]);
 
-  const handleTabChange = (slug: TabSlug) => {
+  const handleTabChange = (slug: string) => {
     setActiveTab(slug);
     setSelectedYear(null);
     setSelectedPru(null);
@@ -114,7 +137,7 @@ export default function InfografikPage() {
       <section className="bg-white sticky top-0 z-10 border-b border-gray-200 shadow-sm">
         <div className="w-full px-4 sm:px-6 lg:px-10">
           <div className="flex gap-1 overflow-x-auto">
-            {TABS.map(tab => (
+            {tabs.map(tab => (
               <button
                 key={tab.slug}
                 onClick={() => handleTabChange(tab.slug)}
