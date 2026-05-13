@@ -1,5 +1,7 @@
+"use client";
 import { COALITION_COLORS } from "@/lib/parti-colors";
 import { getPartiLogo } from "@/lib/parti-logo";
+import { trackDownload } from "@/lib/analytics/trackDownload";
 
 export interface NegeriRow {
   negeri: string;
@@ -35,6 +37,7 @@ export default function NegeriTable({ rows }: Props) {
     const a = document.createElement("a");
     a.href = url; a.download = "keputusan-negeri.csv"; a.click();
     URL.revokeObjectURL(url);
+    trackDownload("keputusan-negeri.csv");
   };
 
   return (

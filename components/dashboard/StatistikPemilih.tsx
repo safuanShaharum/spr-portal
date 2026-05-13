@@ -1,4 +1,5 @@
 "use client";
+import { trackDownload } from "@/lib/analytics/trackDownload";
 
 // TODO: Migrate to getCatalogData('daftar-pemilih-induk-2008-2025') once
 // chunking is implemented. The raw JSON is ~42 MB (107k rows) — loading the
@@ -159,6 +160,7 @@ export default function StatistikPemilih() {
     const a = document.createElement("a");
     a.href = url; a.download = "statistik-pemilih.csv"; a.click();
     URL.revokeObjectURL(url);
+    trackDownload("statistik-pemilih.csv");
   };
 
   if (loading) {

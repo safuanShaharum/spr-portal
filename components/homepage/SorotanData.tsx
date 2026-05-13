@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Eye, Download } from 'lucide-react';
+import { trackDownload } from '@/lib/analytics/trackDownload';
 
 interface InfografikItem {
   id: number;
@@ -168,6 +169,7 @@ function InfografikCard({ item }: { item: InfografikItem }) {
               target="_blank"
               rel="noopener noreferrer"
               title="Muat Turun PDF"
+              onClick={() => trackDownload(item.title || 'infografik.pdf')}
               className="bg-white border border-spr-ink/10 text-spr-ink text-xs font-semibold py-2.5 px-3 rounded-lg hover:border-spr-ink/30 transition"
             >
               <Download className="w-3.5 h-3.5" strokeWidth={2.5} />

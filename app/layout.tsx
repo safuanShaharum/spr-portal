@@ -4,6 +4,7 @@ import "./globals.css";
 import { TopTicker } from "@/components/homepage/TopTicker";
 import { MainNav } from "@/components/homepage/MainNav";
 import Footer from "@/components/Footer";
+import KokoTracker from "@/components/analytics/KokoTracker";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -65,6 +66,7 @@ export default function RootLayout({
         <MainNav />
         <main>{children}</main>
         <Footer />
+        <KokoTracker />
       </body>
     </html>
   );

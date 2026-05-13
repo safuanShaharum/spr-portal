@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ColumnDef } from "@/lib/katalog-data";
 import { getPartiLogo } from "@/lib/parti-logo";
+import { trackDownload } from "@/lib/analytics/trackDownload";
 
 interface ServerPagination {
   page: number;
@@ -107,9 +108,11 @@ export default function KatalogDataTable({ columns, data, title, onRowClick, ser
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "data-export.csv";
+    const filename = `${(title || "data-export").toLowerCase().replace(/\s+/g, "-")}.csv`;
+    a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
+    trackDownload(filename);
   };
 
   return (

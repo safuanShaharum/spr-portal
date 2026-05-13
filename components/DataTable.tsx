@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as XLSX from "xlsx";
+import { trackDownload } from "@/lib/analytics/trackDownload";
 
 interface DataTableProps {
   fileUrl: string;
@@ -133,6 +134,7 @@ export default function DataTable({ fileUrl }: DataTableProps) {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Data");
     XLSX.writeFile(wb, "data-export.csv", { bookType: "csv" });
+    trackDownload("data-export.csv");
   };
 
   // Loading skeleton

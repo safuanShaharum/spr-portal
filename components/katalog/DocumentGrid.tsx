@@ -1,3 +1,6 @@
+"use client";
+import { trackDownload } from "@/lib/analytics/trackDownload";
+
 interface Doc {
   title: string;
   year?: string;
@@ -36,6 +39,7 @@ export default function DocumentGrid({ documents }: Props) {
               download
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackDownload(doc.title)}
               className="inline-flex items-center gap-1.5 text-xs font-medium text-spr-primary hover:underline"
             >
               <DownloadIcon />

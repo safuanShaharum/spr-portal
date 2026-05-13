@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import FooterStats from "./FooterStats";
 
 const LINK_COLUMNS = [
   {
@@ -110,6 +111,8 @@ export default function Footer() {
             </div>
           ))}
         </div>
+
+        <FooterStats />
 
         {/* Bottom bar */}
         <div className="mt-12 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
