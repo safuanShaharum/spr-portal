@@ -1,0 +1,65 @@
+[
+  {
+    "key": "group_spr_perundangan",
+    "title": "Peruntukan Undang-undang",
+    "fields": [
+      {
+        "key": "field_spr_perundangan_items",
+        "label": "Perundangan Items",
+        "name": "perundangan_items",
+        "type": "repeater",
+        "instructions": "Tambah satu row setiap dokumen perundangan. Order = display order di portal.",
+        "required": 0,
+        "min": 0,
+        "max": 0,
+        "layout": "block",
+        "button_label": "Tambah Dokumen",
+        "sub_fields": [
+          {
+            "key": "field_spr_perundangan_title",
+            "label": "Tajuk",
+            "name": "title",
+            "type": "text",
+            "required": 1,
+            "instructions": "Contoh: Akta Pilihan Raya 1958"
+          },
+          {
+            "key": "field_spr_perundangan_year",
+            "label": "Tahun",
+            "name": "year",
+            "type": "text",
+            "required": 0,
+            "instructions": "Contoh: 1958 atau Cetakan Semula 2020"
+          },
+          {
+            "key": "field_spr_perundangan_pdf",
+            "label": "Fail PDF",
+            "name": "pdf_file",
+            "type": "file",
+            "required": 1,
+            "return_format": "array",
+            "library": "all",
+            "mime_types": "pdf"
+          }
+        ]
+      }
+    ],
+    "location": [
+      [
+        {
+          "param": "options_page",
+          "operator": "==",
+          "value": "acf-options-perundangan"
+        }
+      ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Documents shown under Katalog Data → Perundangan → Peruntukan Undang-undang."
+  }
+]

@@ -24,7 +24,15 @@ export async function POST(req: NextRequest) {
     if (body.type === "download") {
       // Tracked as synthetic pageview in Koko: /muat-turun/<filename>.
       // Footer counter sums all pageviews on these paths from Koko's data.
-      const filename = typeof body.filename === "string" ? body.filename : "unknown";
+      // Slugify: Koko's collect.php runs filter_var(...FILTER_VALIDATE_URL)
+      // which rejects paths containing whitespace or special chars.
+      const rawName = typeof body.filename === "string" ? body.filename : "unknown";
+      const filename = rawName
+        .toLowerCase()
+        .replace(/[\s_]+/g, "-")
+        .replace(/[^a-z0-9.\-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "") || "unknown";
       const kokoForm = new URLSearchParams({ pa: `/muat-turun/${filename}`, po: "0" });
       await fetch(KOKO_URL, {
         method: "POST",

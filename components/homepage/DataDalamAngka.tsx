@@ -1,5 +1,6 @@
 import { getLatestPRU } from '@/lib/pru-data';
 import { getPartyColor, getPartyName } from '@/lib/party-colors';
+import { FEATURE_FLAGS } from '@/lib/config/featureFlags';
 
 export async function DataDalamAngka() {
   const pru = await getLatestPRU();
@@ -29,7 +30,7 @@ export async function DataDalamAngka() {
             Angka yang <span className="italic text-spr-gold">membentuk negara</span>.
           </h2>
           <p className="text-white/60 text-lg">
-            Tiga nombor untuk memahami skop Pilihan Raya Umum Ke-{pru.number} — dan siapa sebenarnya yang menentukan masa depan Malaysia.
+            {FEATURE_FLAGS.SHOW_KERAJAAN_PERPADUAN ? "Tiga" : "Dua"} nombor untuk memahami skop Pilihan Raya Umum Ke-{pru.number} — dan siapa sebenarnya yang menentukan masa depan Malaysia.
           </p>
         </div>
 
@@ -38,7 +39,7 @@ export async function DataDalamAngka() {
 
           {/* Card 1: Kerusi Parlimen */}
           <div className="lg:col-span-5 bg-gradient-to-br from-spr-purple-dark to-spr-purple-deep rounded-3xl p-10 relative overflow-hidden">
-            <div className="absolute top-4 right-4 text-[11px] uppercase tracking-widest opacity-50 font-mono">01 / 03</div>
+            <div className="absolute top-4 right-4 text-[11px] uppercase tracking-widest opacity-50 font-mono">01 / {FEATURE_FLAGS.SHOW_KERAJAAN_PERPADUAN ? "03" : "02"}</div>
             <div className="relative z-10">
               <div className="text-[11px] uppercase tracking-[0.24em] font-bold text-spr-gold mb-4">Kerusi Parlimen</div>
               <div
@@ -83,7 +84,7 @@ export async function DataDalamAngka() {
 
           {/* Card 2: Pemilih Berdaftar */}
           <div className="lg:col-span-7 bg-gradient-to-br from-spr-purple to-spr-purple-dark rounded-3xl p-10 relative overflow-hidden">
-            <div className="absolute top-4 right-4 text-[11px] uppercase tracking-widest opacity-50 font-mono">02 / 03</div>
+            <div className="absolute top-4 right-4 text-[11px] uppercase tracking-widest opacity-50 font-mono">02 / {FEATURE_FLAGS.SHOW_KERAJAAN_PERPADUAN ? "03" : "02"}</div>
             <div className="relative z-10 h-full flex flex-col">
               <div className="text-[11px] uppercase tracking-[0.24em] font-bold text-spr-coral mb-4">Pemilih Berdaftar</div>
 
@@ -125,7 +126,8 @@ export async function DataDalamAngka() {
             </div>
           </div>
 
-          {/* Card 3: Kerajaan Perpaduan + Bar Chart */}
+          {/* Card 3: Kerajaan Perpaduan + Bar Chart (amendment R2 #19 — hidden) */}
+          {FEATURE_FLAGS.SHOW_KERAJAAN_PERPADUAN && (
           <div className="lg:col-span-12 bg-gradient-to-r from-white/5 to-white/[0.02] border border-white/10 rounded-3xl p-10 relative overflow-hidden">
             <div className="absolute top-4 right-4 text-[11px] uppercase tracking-widest opacity-50 font-mono">03 / 03</div>
             <div className="grid lg:grid-cols-[auto_1fr] gap-10 items-center">
@@ -188,6 +190,7 @@ export async function DataDalamAngka() {
               </div>
             </div>
           </div>
+          )}
         </div>
       </div>
     </section>

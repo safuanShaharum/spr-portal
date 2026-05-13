@@ -9,6 +9,7 @@ import FilterRow from "@/components/katalog/FilterRow";
 import KatalogDataTable from "@/components/katalog/KatalogDataTable";
 import PartiGrid from "@/components/katalog/PartiGrid";
 import DocumentGrid from "@/components/katalog/DocumentGrid";
+import RemoteDocumentGrid from "@/components/katalog/RemoteDocumentGrid";
 import EmptyState from "@/components/katalog/EmptyState";
 import ElectionModal from "@/components/katalog/ElectionModal";
 import DetailModal from "@/components/katalog/DetailModal";
@@ -523,6 +524,10 @@ function KatalogContent() {
 
             {tab.type === "grid-document" && tab.documents && (
               <DocumentGrid documents={tab.documents} />
+            )}
+
+            {tab.type === "grid-document-remote" && tab.remoteEndpoint && (
+              <RemoteDocumentGrid endpoint={tab.remoteEndpoint} />
             )}
 
             {tab.type === "empty" && <EmptyState message={tab.emptyMessage} />}

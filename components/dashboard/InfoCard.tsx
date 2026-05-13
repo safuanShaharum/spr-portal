@@ -1,3 +1,5 @@
+import { FEATURE_FLAGS } from "@/lib/config/featureFlags";
+
 interface Props {
   tarikh: string;
   pm: string;
@@ -19,7 +21,8 @@ export default function InfoCard({ tarikh, pm, kerajaan, majoriti, jumlahPemilih
   const items = [
     { label: "Tarikh", value: tarikh },
     { label: "Perdana Menteri", value: pm },
-    { label: "Kerajaan", value: kerajaan },
+    // Amendment R2 #20: hide row temporarily — toggle FEATURE_FLAGS to revert
+    ...(FEATURE_FLAGS.SHOW_KERAJAAN_PERPADUAN ? [{ label: "Kerajaan", value: kerajaan }] : []),
     { label: "Majoriti Mudah", value: majoriti },
     ...(jumlahPemilih ? [{ label: "Jumlah Pemilih", value: fmtNum(jumlahPemilih) }] : []),
     ...(peratusanKeluar ? [{ label: "Peratusan Keluar", value: `${peratusanKeluar}%` }] : []),

@@ -24,13 +24,14 @@ export interface CandidateData {
 
 export interface TabDef {
   label: string;
-  type: "table" | "grid-parti" | "grid-document" | "empty";
+  type: "table" | "grid-parti" | "grid-document" | "grid-document-remote" | "empty";
   modalType?: "election" | "detail";
   sheetSlug?: string;
   apiExtraParams?: Record<string, string>;
   columns?: ColumnDef[];
   filters?: FilterDef[];
   documents?: { title: string; year?: string; status?: string }[];
+  remoteEndpoint?: string; // for type: "grid-document-remote"
   emptyMessage?: string;
   yearRange?: string;
   description?: string;
@@ -280,19 +281,13 @@ const TAB_PUSAT_MENGUNDI: TabDef = {
   ],
 };
 
+// Amendment R2 #23: documents managed via WP ACF Options page "Perundangan"
+// — SPR team add/remove via WP admin. Fetched from /api/perundangan.
 const TAB_PERUNTUKAN: TabDef = {
   label: "Peruntukan Undang-undang",
   description: "Akta dan peraturan-peraturan yang mengawal selia pilihan raya di Malaysia.",
-  type: "grid-document",
-  documents: [
-    { title: "Perlembagaan Persekutuan", year: "Cetakan Semula 2020" },
-    { title: "Akta Kesalahan Pilihan Raya 1954", year: "1954" },
-    { title: "Akta Pilihan Raya 1958", year: "1958" },
-    { title: "Akta Suruhanjaya Pilihan Raya 1957", year: "1957" },
-    { title: "Peraturan-Peraturan Penjalanan Pilihan Raya 1981", year: "1981" },
-    { title: "Peraturan-Peraturan Pilihan Raya (Pendaftaran Pemilih) 2002", year: "2002" },
-    { title: "Peraturan-Peraturan (Pengundian Pos) 2003", year: "2003" },
-  ],
+  type: "grid-document-remote",
+  remoteEndpoint: "/api/perundangan",
 };
 
 const TAB_PETISYEN: TabDef = {
@@ -375,6 +370,17 @@ const TAB_PEMERHATI: TabDef = {
   ],
 };
 
+// Amendment R2 #24: FAQ tab under Pendidikan Pengundi.
+// Documents managed via WP ACF Options page "Soalan Lazim" — SPR team can
+// add/remove PDFs without code changes. Frontend fetches from /api/faq
+// (proxied to /wp-json/spr/v1/faq, edge-cached 5 min).
+const TAB_FAQ: TabDef = {
+  label: "Soalan Lazim (FAQ)",
+  description: "Soalan lazim berkaitan pilihan raya dan pendidikan pengundi.",
+  type: "grid-document-remote",
+  remoteEndpoint: "/api/faq",
+};
+
 const TAB_VE: TabDef = {
   label: "Bilangan Program Pendidikan Pengundi",
   description: "Bilangan program pendidikan pengundi (Voter Education) mengikut institusi pendidikan dan bilangan peserta.",
@@ -445,5 +451,11 @@ export const BAHAGIAN_LIST: BahagianDef[] = [
     label: "Pendidikan Pengundi",
     count: 1,
     tabs: [TAB_VE],
+  },
+  {
+    slug: "soalan-lazim",
+    label: "Soalan Lazim",
+    count: 1,
+    tabs: [TAB_FAQ],
   },
 ];

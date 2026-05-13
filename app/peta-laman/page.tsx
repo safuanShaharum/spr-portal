@@ -31,6 +31,7 @@ const SECTIONS = [
       { label: "Kesalahan Pilihan Raya", href: "/katalog?bahagian=kesalahan-pilihan-raya" },
       { label: "Pemerhati Pilihan Raya", href: "/katalog?bahagian=pemerhati-pilihan-raya" },
       { label: "Pendidikan Pengundi", href: "/katalog?bahagian=pendidikan-pengundi" },
+      { label: "Soalan Lazim", href: "/katalog?bahagian=soalan-lazim" },
     ],
   },
   {

@@ -11,6 +11,7 @@ const LINK_COLUMNS = [
       { label: "Persempadanan", href: "/katalog?bahagian=persempadanan" },
       { label: "Perundangan", href: "/katalog?bahagian=perundangan" },
       { label: "Kesalahan Pilihan Raya", href: "/katalog?bahagian=kesalahan-pilihan-raya" },
+      { label: "Soalan Lazim", href: "/katalog?bahagian=soalan-lazim" },
     ],
   },
   {
