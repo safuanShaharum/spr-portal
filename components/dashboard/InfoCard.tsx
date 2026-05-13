@@ -6,7 +6,7 @@ interface Props {
   jumlahPemilih?: number;
   peratusanKeluar?: string;
   jumlahCalon?: number;
-  undiRosak?: number;
+  undiDitolak?: number;
 }
 
 function fmtNum(n: number): string {
@@ -15,7 +15,7 @@ function fmtNum(n: number): string {
   return n.toLocaleString();
 }
 
-export default function InfoCard({ tarikh, pm, kerajaan, majoriti, jumlahPemilih, peratusanKeluar, jumlahCalon, undiRosak }: Props) {
+export default function InfoCard({ tarikh, pm, kerajaan, majoriti, jumlahPemilih, peratusanKeluar, jumlahCalon, undiDitolak }: Props) {
   const items = [
     { label: "Tarikh", value: tarikh },
     { label: "Perdana Menteri", value: pm },
@@ -24,7 +24,7 @@ export default function InfoCard({ tarikh, pm, kerajaan, majoriti, jumlahPemilih
     ...(jumlahPemilih ? [{ label: "Jumlah Pemilih", value: fmtNum(jumlahPemilih) }] : []),
     ...(peratusanKeluar ? [{ label: "Peratusan Keluar", value: `${peratusanKeluar}%` }] : []),
     ...(jumlahCalon ? [{ label: "Jumlah Calon", value: jumlahCalon.toLocaleString() }] : []),
-    ...(undiRosak != null && undiRosak > 0 ? [{ label: "Undi Ditolak", value: undiRosak.toLocaleString() }] : []),
+    ...(undiDitolak != null && undiDitolak > 0 ? [{ label: "Undi Ditolak", value: undiDitolak.toLocaleString() }] : []),
   ];
 
   return (

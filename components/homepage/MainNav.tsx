@@ -72,7 +72,7 @@ export function MainNav({ overlay }: MainNavProps = {}) {
           <Link href="/" className="flex items-center gap-3 group lg:justify-self-start">
             <Image
               src="/images/logo-spr.png"
-              alt="Suruhanjaya Pilihan Raya"
+              alt="Logo Suruhanjaya Pilihan Raya Malaysia"
               width={62}
               height={48}
               priority
@@ -173,7 +173,7 @@ export function MainNav({ overlay }: MainNavProps = {}) {
             <Link href="/" onClick={() => startTransition(() => setDrawerOpen(false))} className="flex items-center gap-3">
               <Image
                 src="/images/logo-spr.png"
-                alt="Suruhanjaya Pilihan Raya"
+                alt="Logo Suruhanjaya Pilihan Raya Malaysia"
                 width={52}
                 height={40}
                 className="h-10 w-auto object-contain"

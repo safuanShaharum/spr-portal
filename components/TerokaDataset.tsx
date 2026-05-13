@@ -93,7 +93,7 @@ const CATEGORIES: CategoryData[] = [
     ],
   },
   {
-    slug: "pemantauan-operasi",
+    slug: "kesalahan-pilihan-raya",
     label: "Kesalahan Pilihan Raya",
     color: "#00D4AA",
     featured: {

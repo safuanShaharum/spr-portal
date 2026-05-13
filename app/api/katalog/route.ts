@@ -140,6 +140,14 @@ export async function GET(req: NextRequest) {
 
     let rows = parseSheet(workbook, actualName);
 
+    // DPI: amendment R2 #22 — pamer 2012-2025 sahaja
+    if (sheetSlug === "daftar-pemilih") {
+      rows = rows.filter((r) => {
+        const y = parseInt(String(r["TAHUN"] || "").replace(/\D/g, "").slice(-4), 10);
+        return y >= 2012;
+      });
+    }
+
     if (rows.length === 0) {
       return NextResponse.json({
         data: [], total: 0, page, limit, totalPages: 0,

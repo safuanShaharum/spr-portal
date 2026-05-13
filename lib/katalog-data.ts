@@ -210,10 +210,12 @@ const TAB_DPI: TabDef = {
   ],
 };
 
+// TODO: Re-enable DPPR after SPR provides updated data (amendment R2 #22)
 const TAB_DPPR: TabDef = {
   label: "Statistik Daftar Pemilih Pilihan Raya (DPPR)",
   description: "Bilangan pemilih berdaftar dalam Daftar Pemilih Pilihan Raya mengikut negeri, parlimen, DUN, daerah mengundi, kumpulan umur dan jantina untuk setiap pilihan raya.",
-  type: "table",
+  type: "empty",
+  emptyMessage: "Data DPPR sedang dikemaskini. Sila kunjungi semula tidak lama lagi.",
   sheetSlug: "dppr",
   filters: [
     { key: "tahun", label: "Tahun", options: [] },
@@ -350,6 +352,7 @@ const TAB_KESALAHAN: TabDef = {
     { key: "KATEGORI KESALAHAN CERAMAH TANPA PERMIT", header: "CERAMAH TANPA PERMIT", type: "number" },
     { key: "KATEGORI KESALAHAN BAHAN KEMPEN", header: "BAHAN KEMPEN", type: "number" },
     { key: "KATEGORI KESALAHAN HARI MENGUNDI", header: "HARI MENGUNDI", type: "number" },
+    { key: "BILANGAN", header: "BILANGAN", type: "number" },
   ],
 };
 
@@ -426,19 +429,19 @@ export const BAHAGIAN_LIST: BahagianDef[] = [
     tabs: [TAB_BAJET],
   },
   {
-    slug: "pemantauan-operasi",
+    slug: "kesalahan-pilihan-raya",
     label: "Kesalahan Pilihan Raya",
     count: 1,
     tabs: [TAB_KESALAHAN],
   },
   {
-    slug: "penilaian-pemerhati",
+    slug: "pemerhati-pilihan-raya",
     label: "Pemerhati Pilihan Raya",
     count: 1,
     tabs: [TAB_PEMERHATI],
   },
   {
-    slug: "akademi-pilihan-raya",
+    slug: "pendidikan-pengundi",
     label: "Pendidikan Pengundi",
     count: 1,
     tabs: [TAB_VE],

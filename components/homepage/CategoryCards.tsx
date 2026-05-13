@@ -89,7 +89,7 @@ const CATEGORIES: Category[] = [
     description: 'Laporan kesalahan pilihan raya dan bilangan aduan PP-KPR.',
     icon: <Eye className="w-6 h-6 text-white" />,
     datasets: 1,
-    href: '/katalog?bahagian=pemantauan-operasi',
+    href: '/katalog?bahagian=kesalahan-pilihan-raya',
   },
   {
     slug: 'pemerhati',
@@ -99,7 +99,7 @@ const CATEGORIES: Category[] = [
     description: 'Pemerhati pilihan raya dari organisasi tempatan dan antarabangsa.',
     icon: <Globe2 className="w-6 h-6 text-white" />,
     datasets: 1,
-    href: '/katalog?bahagian=penilaian-pemerhati',
+    href: '/katalog?bahagian=pemerhati-pilihan-raya',
   },
   {
     slug: 'akademi',
@@ -109,7 +109,7 @@ const CATEGORIES: Category[] = [
     description: 'Program pendidikan pengundi (Voter Education) mengikut institusi pendidikan dan bilangan peserta.',
     icon: <GraduationCap className="w-6 h-6 text-white" />,
     datasets: 1,
-    href: '/katalog?bahagian=akademi-pilihan-raya',
+    href: '/katalog?bahagian=pendidikan-pengundi',
   },
 ];
 

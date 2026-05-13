@@ -154,7 +154,11 @@ async function convertSheet(workbook, sheetName) {
 
   const sizeBytes = Buffer.byteLength(json, 'utf8');
   const columns = data.length > 0 ? Object.keys(data[0]) : [];
-  const yearRange = data.length > 0 ? computeYearRange(data, columns) : null;
+  let yearRange = data.length > 0 ? computeYearRange(data, columns) : null;
+  // Amendment R2 #22: DPI pamer 2012-2025 sahaja (API route filters runtime)
+  if (slug.startsWith('daftar-pemilih-induk') && yearRange) {
+    yearRange = '2012–2025';
+  }
 
   return {
     slug,

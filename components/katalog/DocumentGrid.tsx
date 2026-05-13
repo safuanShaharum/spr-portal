@@ -2,11 +2,18 @@ interface Doc {
   title: string;
   year?: string;
   status?: string;
+  url?: string;
 }
 
 interface Props {
   documents: Doc[];
 }
+
+const DownloadIcon = () => (
+  <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 export default function DocumentGrid({ documents }: Props) {
   return (
@@ -23,13 +30,22 @@ export default function DocumentGrid({ documents }: Props) {
           {doc.year && <p className="text-xs text-spr-text-muted mb-3">{doc.year}</p>}
           {doc.status ? (
             <span className="text-xs text-spr-text-muted italic">{doc.status}</span>
-          ) : (
-            <button className="inline-flex items-center gap-1.5 text-xs font-medium text-spr-primary hover:underline">
-              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+          ) : doc.url ? (
+            <a
+              href={doc.url}
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-spr-primary hover:underline"
+            >
+              <DownloadIcon />
               Muat Turun PDF
-            </button>
+            </a>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-spr-text-muted italic">
+              <DownloadIcon />
+              Fail belum tersedia
+            </span>
           )}
         </div>
       ))}

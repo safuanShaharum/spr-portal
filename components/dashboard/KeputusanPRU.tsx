@@ -76,12 +76,12 @@ export default function KeputusanPRU() {
     const jumlahPemilih = winners.reduce((s, r) => s + (parseInt(String(r["JumlahPemilih"] || "0"), 10) || 0), 0);
     const pctSum = winners.reduce((s, r) => s + (parseFloat(String(r["PERATUS UNDI"] || "0")) || 0), 0);
     const pctCount = winners.filter((r) => parseFloat(String(r["PERATUS UNDI"] || "0")) > 0).length;
-    const undiRosak = winners.reduce((s, r) => s + (parseInt(String(r["UNDI DITOLAK"] || "0"), 10) || 0), 0);
+    const undiDitolak = winners.reduce((s, r) => s + (parseInt(String(r["UNDI DITOLAK"] || "0"), 10) || 0), 0);
     return {
       jumlahPemilih,
       peratusanKeluar: pctCount > 0 ? (pctSum / pctCount).toFixed(1) : "0",
       jumlahCalon: allParlimenYear.length,
-      undiRosak,
+      undiDitolak,
     };
   }, [winners, allParlimenYear]);
 
@@ -208,7 +208,7 @@ export default function KeputusanPRU() {
               jumlahPemilih={extendedStats.jumlahPemilih}
               peratusanKeluar={extendedStats.peratusanKeluar}
               jumlahCalon={extendedStats.jumlahCalon}
-              undiRosak={extendedStats.undiRosak}
+              undiDitolak={extendedStats.undiDitolak}
             />
           </div>
           <NegeriTable rows={negeriRows} />

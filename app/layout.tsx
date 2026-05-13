@@ -45,6 +45,10 @@ export const metadata: Metadata = {
   title: "Portal Data Terbuka SPR",
   description:
     "Portal Data Terbuka Suruhanjaya Pilihan Raya Malaysia — Akses data pilihan raya, sempadan, statistik pengundi dan keputusan PRU secara terbuka.",
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({

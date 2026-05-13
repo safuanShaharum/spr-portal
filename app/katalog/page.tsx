@@ -48,6 +48,19 @@ const INDEX_SLUG_MAP: Record<string, string> = {
 const PEMERHATI_META_COLS = new Set([
   "TAHUN PILIHAN RAYA", "PILIHAN RAYA", "NEGERI", "PARLIMEN", "DUN",
 ]);
+// Amendment R2 #14: compute BILANGAN (jumlah) column for Kesalahan Pilihan Raya.
+// Source XLSX has footnote rows after data — drop rows where TAHUN is not a 4-digit year.
+function addKesalahanBilangan(rows: Row[]): Row[] {
+  return rows
+    .filter((r) => /^\d{4}$/.test(String(r["TAHUN PILIHAN RAYA"] || "").trim()))
+    .map((r) => {
+      const a = Number(r["KATEGORI KESALAHAN CERAMAH TANPA PERMIT"]) || 0;
+      const b = Number(r["KATEGORI KESALAHAN BAHAN KEMPEN"]) || 0;
+      const c = Number(r["KATEGORI KESALAHAN HARI MENGUNDI"]) || 0;
+      return { ...r, BILANGAN: a + b + c };
+    });
+}
+
 function pivotPemerhati(rows: Row[]): Row[] {
   const out: Row[] = [];
   for (const row of rows) {
@@ -56,6 +69,7 @@ function pivotPemerhati(rows: Row[]): Row[] {
       const num = Number(val);
       if (!isNaN(num) && num > 0) {
         out.push({
+          "TAHUN PILIHAN RAYA": row["TAHUN PILIHAN RAYA"] || "",
           "PILIHAN RAYA": row["PILIHAN RAYA"] || "",
           NEGERI: row["NEGERI"] || "",
           PARLIMEN: row["PARLIMEN"] || "",
@@ -266,6 +280,7 @@ function KatalogContent() {
           if (controller.signal.aborted) return;
           let rows = raw as Row[];
           if (catalogSlug === "bil-pemerhati") rows = pivotPemerhati(rows);
+          if (catalogSlug === "bil-kesalahan-pr") rows = addKesalahanBilangan(rows);
 
           // Apply tab-level extra params + user filters
           const baseQuery: KatalogQuery = {

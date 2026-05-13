@@ -28,9 +28,9 @@ const SECTIONS = [
       { label: "Persempadanan", href: "/katalog?bahagian=persempadanan" },
       { label: "Perundangan", href: "/katalog?bahagian=perundangan" },
       { label: "Pentadbiran & Pengurusan", href: "/katalog?bahagian=pentadbiran-pengurusan" },
-      { label: "Kesalahan Pilihan Raya", href: "/katalog?bahagian=pemantauan-operasi" },
-      { label: "Pemerhati Pilihan Raya", href: "/katalog?bahagian=penilaian-pemerhati" },
-      { label: "Pendidikan Pengundi", href: "/katalog?bahagian=akademi-pilihan-raya" },
+      { label: "Kesalahan Pilihan Raya", href: "/katalog?bahagian=kesalahan-pilihan-raya" },
+      { label: "Pemerhati Pilihan Raya", href: "/katalog?bahagian=pemerhati-pilihan-raya" },
+      { label: "Pendidikan Pengundi", href: "/katalog?bahagian=pendidikan-pengundi" },
     ],
   },
   {

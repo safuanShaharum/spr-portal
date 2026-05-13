@@ -9,7 +9,7 @@ const LINK_COLUMNS = [
       { label: "Pendaftaran Pemilih", href: "/katalog?bahagian=pendaftaran-pemilih" },
       { label: "Persempadanan", href: "/katalog?bahagian=persempadanan" },
       { label: "Perundangan", href: "/katalog?bahagian=perundangan" },
-      { label: "Kesalahan Pilihan Raya", href: "/katalog?bahagian=pemantauan-operasi" },
+      { label: "Kesalahan Pilihan Raya", href: "/katalog?bahagian=kesalahan-pilihan-raya" },
     ],
   },
   {
@@ -57,7 +57,7 @@ export default function Footer() {
             <Link href="/" className="flex items-center gap-3 mb-5 group">
               <Image
                 src="/images/logo-spr.png"
-                alt="Suruhanjaya Pilihan Raya"
+                alt="Logo Suruhanjaya Pilihan Raya Malaysia"
                 width={56}
                 height={44}
                 className="h-11 w-auto object-contain group-hover:scale-105 transition-transform"
