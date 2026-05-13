@@ -10,9 +10,12 @@ const DATE_FMT: Intl.DateTimeFormatOptions = {
   timeZone: 'Asia/Kuala_Lumpur',
 };
 
+// Amendment R2 #27: keep Malay date format but render AM/PM in English
+// (ms-MY locale outputs "PG"/"PTG"/"PM").
 const TIME_FMT: Intl.DateTimeFormatOptions = {
   hour: '2-digit',
   minute: '2-digit',
+  hour12: true,
   timeZone: 'Asia/Kuala_Lumpur',
 };
 
@@ -22,7 +25,7 @@ export function TopTicker() {
   useEffect(() => {
     const tick = () => {
       const d = new Date();
-      setNow(`${d.toLocaleDateString('ms-MY', DATE_FMT)} • ${d.toLocaleTimeString('ms-MY', TIME_FMT)}`);
+      setNow(`${d.toLocaleDateString('ms-MY', DATE_FMT)} • ${d.toLocaleTimeString('en-US', TIME_FMT)}`);
     };
     tick();
     const id = setInterval(tick, 60_000);

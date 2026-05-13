@@ -62,6 +62,19 @@ function addKesalahanBilangan(rows: Row[]): Row[] {
     });
 }
 
+// Amendment R2 #25: extract footnote text from Kesalahan Pilihan Raya source.
+// Notes live in the TAHUN PILIHAN RAYA column of trailing rows (non-numeric)
+// — pull out the numbered ones, strip the "N)" prefix, return as a list.
+function extractKesalahanNotes(rows: Row[]): string[] {
+  const notes: string[] = [];
+  for (const r of rows) {
+    const v = String(r["TAHUN PILIHAN RAYA"] || "").trim();
+    if (/^\d{4}$/.test(v) || v === "" || v.toLowerCase() === "nota:") continue;
+    notes.push(v.replace(/^\d+\)\s*/, ""));
+  }
+  return notes;
+}
+
 function pivotPemerhati(rows: Row[]): Row[] {
   const out: Row[] = [];
   for (const row of rows) {
@@ -212,6 +225,9 @@ function KatalogContent() {
       .catch(() => {/* tooltip just won't show; non-blocking */});
   }, []);
 
+  // Amendment R2 #25: notes extracted from source data (e.g. Kesalahan PR)
+  const [tableNotes, setTableNotes] = useState<string[]>([]);
+
   // API data state
   const [apiData, setApiData] = useState<Record<string, unknown>[]>([]);
   const [apiColumns, setApiColumns] = useState<string[]>([]);
@@ -281,7 +297,12 @@ function KatalogContent() {
           if (controller.signal.aborted) return;
           let rows = raw as Row[];
           if (catalogSlug === "bil-pemerhati") rows = pivotPemerhati(rows);
-          if (catalogSlug === "bil-kesalahan-pr") rows = addKesalahanBilangan(rows);
+          if (catalogSlug === "bil-kesalahan-pr") {
+            setTableNotes(extractKesalahanNotes(rows));
+            rows = addKesalahanBilangan(rows);
+          } else {
+            setTableNotes([]);
+          }
 
           // Apply tab-level extra params + user filters
           const baseQuery: KatalogQuery = {
@@ -513,6 +534,18 @@ function KatalogContent() {
                   onLimitChange: (l) => { setApiLimit(l); setApiPage(1); },
                 } : undefined}
               />
+            )}
+
+            {/* Amendment R2 #25: footnotes below the table */}
+            {isTableTab && !apiLoading && !apiError && tableNotes.length > 0 && (
+              <div className="mt-4 px-4 py-3 bg-spr-bg-secondary border border-spr-border rounded-lg">
+                <div className="text-xs font-semibold text-spr-navy mb-2">Nota:</div>
+                <ol className="list-decimal list-inside space-y-1 text-xs text-spr-text-secondary leading-relaxed">
+                  {tableNotes.map((n, i) => (
+                    <li key={i}>{n}</li>
+                  ))}
+                </ol>
+              </div>
             )}
 
             {/* Empty table — API returned 0 rows or no columns */}
