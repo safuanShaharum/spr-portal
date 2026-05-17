@@ -62,17 +62,25 @@ function addKesalahanBilangan(rows: Row[]): Row[] {
     });
 }
 
-// Amendment R2 #25: extract footnote text from Kesalahan Pilihan Raya source.
-// Notes live in the TAHUN PILIHAN RAYA column of trailing rows (non-numeric)
-// — pull out the numbered ones, strip the "N)" prefix, return as a list.
-function extractKesalahanNotes(rows: Row[]): string[] {
+// Amendment R2 #25: extract footnote text from source rows.
+// Notes live in the TAHUN PILIHAN RAYA / TAHUN column of trailing rows (non-numeric)
+// — pull them out, strip leading "N)" or "Nota:" prefix, return as a list.
+function extractTableNotes(rows: Row[], yearKey = "TAHUN PILIHAN RAYA"): string[] {
   const notes: string[] = [];
   for (const r of rows) {
-    const v = String(r["TAHUN PILIHAN RAYA"] || "").trim();
+    const v = String(r[yearKey] || "").trim();
     if (/^\d{4}$/.test(v) || v === "" || v.toLowerCase() === "nota:") continue;
-    notes.push(v.replace(/^\d+\)\s*/, ""));
+    notes.push(v.replace(/^\d+\)\s*/, "").replace(/^Nota:\s*/i, ""));
   }
   return notes;
+}
+
+// Filter out trailing note rows from the displayed table data.
+function stripNoteRows(rows: Row[], yearKey = "TAHUN PILIHAN RAYA"): Row[] {
+  return rows.filter((r) => {
+    const v = String(r[yearKey] || "").trim();
+    return v === "" || /^\d{4}$/.test(v);
+  });
 }
 
 function pivotPemerhati(rows: Row[]): Row[] {
@@ -298,8 +306,11 @@ function KatalogContent() {
           let rows = raw as Row[];
           if (catalogSlug === "bil-pemerhati") rows = pivotPemerhati(rows);
           if (catalogSlug === "bil-kesalahan-pr") {
-            setTableNotes(extractKesalahanNotes(rows));
+            setTableNotes(extractTableNotes(rows));
             rows = addKesalahanBilangan(rows);
+          } else if (catalogSlug === "bajet-pr") {
+            setTableNotes(extractTableNotes(rows));
+            rows = stripNoteRows(rows);
           } else {
             setTableNotes([]);
           }
@@ -478,7 +489,7 @@ function KatalogContent() {
               <TabBar
                 tabs={bahagian.tabs.map((t) => {
                   const indexSlug = t.sheetSlug ? INDEX_SLUG_MAP[t.sheetSlug] : undefined;
-                  return { label: t.label, yearRange: indexSlug ? yearRangeMap[indexSlug] : undefined };
+                  return { label: t.label, yearRange: indexSlug ? yearRangeMap[indexSlug] : undefined, tooltip: t.tooltip };
                 })}
                 activeIndex={activeTabIndex}
                 onSelect={handleTabChange}

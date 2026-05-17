@@ -1,6 +1,7 @@
 export interface TabItem {
   label: string;
   yearRange?: string;
+  tooltip?: string;
 }
 
 interface Props {
@@ -24,9 +25,10 @@ export default function TabBar({ tabs, activeIndex, onSelect }: Props) {
           >
             {tab.label}
           </button>
-          {tab.yearRange && (
-            <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity bg-spr-ink text-white text-xs font-medium px-3 py-1.5 rounded-md shadow-lg whitespace-nowrap">
-              Data dari Tahun {tab.yearRange}
+          {(tab.tooltip || tab.yearRange) && (
+            <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity bg-spr-ink text-white text-xs font-medium px-3 py-1.5 rounded-md shadow-lg whitespace-nowrap text-center">
+              {tab.tooltip && <div>{tab.tooltip}</div>}
+              {tab.yearRange && <div>Data dari Tahun {tab.yearRange}</div>}
               <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-spr-ink rotate-45" />
             </div>
           )}

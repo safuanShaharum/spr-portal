@@ -35,6 +35,7 @@ export interface TabDef {
   emptyMessage?: string;
   yearRange?: string;
   description?: string;
+  tooltip?: string;
 }
 
 export interface BahagianDef {
@@ -248,6 +249,7 @@ const TAB_DPPR: TabDef = {
 
 const TAB_SENARAI_BPR: TabDef = {
   label: "Senarai BPR",
+  tooltip: "Senarai Bahagian Pilihan Raya (BPR)",
   description: "Senarai Bahagian Pilihan Raya (BPR) seluruh Malaysia mengikut negeri, parlimen, DUN dan daerah mengundi.",
   type: "table",
   sheetSlug: "senarai-bpr",
@@ -262,6 +264,7 @@ const TAB_SENARAI_BPR: TabDef = {
 
 const TAB_PUSAT_MENGUNDI: TabDef = {
   label: "Statistik PM/PPC/PPRU",
+  tooltip: "Statistik Pusat Mengundi (PM) / Pusat Penamaan Calon (PPC) / Pusat Penjumlahan Rasmi Undi (PPRU)",
   description: "Bilangan Pusat Mengundi (PM), Pusat Penamaan Calon (PPC) dan Pusat Penjumlahan Rasmi Undi (PPRU) mengikut tahun dan kawasan.",
   type: "table",
   sheetSlug: "pusat-mengundi",
