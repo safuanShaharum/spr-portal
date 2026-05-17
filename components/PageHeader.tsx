@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
+import { Disclaimer } from './Disclaimer';
 
 export interface BreadcrumbCrumb {
   label: string;
@@ -20,9 +21,10 @@ interface PageHeaderProps {
   datasetLabel?: string;
   datasetDescription?: string;
   filterPills?: FilterPill[];
+  showDisclaimer?: boolean;
 }
 
-export function PageHeader({ breadcrumb, title, subtitle, datasetLabel, datasetDescription, filterPills }: PageHeaderProps) {
+export function PageHeader({ breadcrumb, title, subtitle, datasetLabel, datasetDescription, filterPills, showDisclaimer = true }: PageHeaderProps) {
   return (
     <section
       className="relative bg-spr-purple/5 text-spr-ink border-b border-spr-ink/10"
@@ -69,6 +71,8 @@ export function PageHeader({ breadcrumb, title, subtitle, datasetLabel, datasetD
         {subtitle && (
           <p className="mt-1.5 text-xs text-spr-ink/55 leading-relaxed">{subtitle}</p>
         )}
+
+        {showDisclaimer && <Disclaimer className="mt-4" />}
 
         {filterPills && filterPills.length > 0 && (
           <div className="mt-5 flex flex-wrap gap-2">

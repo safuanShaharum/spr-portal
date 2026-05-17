@@ -8,6 +8,8 @@ import {
   Eye,
   Globe2,
   GraduationCap,
+  HelpCircle,
+  ArrowRight,
 } from 'lucide-react';
 
 interface Category {
@@ -138,6 +140,28 @@ export function CategoryCards() {
             <RegularCard key={cat.slug} category={cat} />
           ))}
         </div>
+
+        {/* FAQ CTA banner — supplementary link, not a data category */}
+        <Link
+          href="/katalog?bahagian=soalan-lazim"
+          className="group mt-5 flex items-center gap-5 rounded-3xl border-2 border-spr-purple/15 bg-spr-purple/[0.04] hover:bg-spr-purple/[0.08] hover:border-spr-purple/30 transition-all pl-7 pr-10 py-6"
+        >
+          <div className="shrink-0 w-12 h-12 rounded-2xl bg-spr-purple/15 text-spr-purple flex items-center justify-center">
+            <HelpCircle className="w-6 h-6" strokeWidth={2} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-base md:text-lg font-semibold text-spr-ink leading-tight">
+              Ada soalan tentang data?
+            </div>
+            <div className="text-sm text-spr-ink/65 mt-0.5">
+              Lihat Soalan Lazim (FAQ) untuk panduan penggunaan dan jawapan kepada pertanyaan umum.
+            </div>
+          </div>
+          <div className="shrink-0 flex items-center gap-2 text-spr-purple font-medium text-sm">
+            <span>Lihat FAQ</span>
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </div>
+        </Link>
       </div>
     </section>
   );

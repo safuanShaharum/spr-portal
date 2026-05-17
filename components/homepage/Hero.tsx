@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, Database, BarChart3, Image as ImageIcon, ArrowRight, Users, MapPin, Scale, Building2, Eye, Globe2 } from 'lucide-react';
 import Link from 'next/link';
+import { Disclaimer } from '@/components/Disclaimer';
 
 const CATEGORY_CHIPS = [
   { label: 'Penjalanan Pilihan Raya', href: '/katalog?bahagian=penjalanan-pilihan-raya', icon: BarChart3 },
@@ -64,6 +65,13 @@ export function Hero() {
           Statistik pemilih, keputusan, calon dan parti dari{' '}
           <span className="text-spr-gold font-medium">2008 hingga kini</span>
         </p>
+
+        <div
+          className="max-w-4xl mx-auto mb-10 reveal"
+          style={{ animationDelay: '0.45s', opacity: 0 }}
+        >
+          <Disclaimer variant="dark" />
+        </div>
 
         {/* Search bar */}
         <form
