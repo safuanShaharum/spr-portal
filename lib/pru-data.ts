@@ -2,6 +2,7 @@
  * Latest PRU results data — dynamic-ready
  * Ganti data ni bila PRU baru. Future: fetch dari WordPress CPT API.
  */
+import { WP_API } from '@/lib/wp-api';
 
 export interface SeatDistribution {
   party: string;
@@ -48,8 +49,6 @@ export const LATEST_PRU: PRUData = {
     { party: 'OTHER', seats: 8 },
   ],
 };
-
-const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || 'http://spr-open-data.local/wp-json').replace(/\/$/, '');
 
 export async function getLatestPRU(): Promise<PRUData> {
   try {

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
-
-const WP_API = process.env.NEXT_PUBLIC_WP_API_URL || "http://spr-open-data.local/wp-json";
+import { WP_API } from "@/lib/wp-api";
 
 /* ------------------------------------------------------------------ */
 /*  Sheet slug → Excel sheet name mapping                              */

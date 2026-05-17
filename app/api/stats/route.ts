@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
+import { WP_API } from "@/lib/wp-api";
 
 // Amendment R2 #18 Phase 2: aggregate counters for footer.
 // Fetches from custom SPR REST endpoint that joins Koko site_stats + own
 // wp_spr_downloads table. Cached for 5 min at the edge.
-const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || "https://cmsodspr.sawangville.dev/wp-json").replace(/\/+$/, "");
 const STATS_URL = `${WP_API}/spr/v1/stats`;
 
 export const runtime = "edge";

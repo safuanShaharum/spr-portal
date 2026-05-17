@@ -18,8 +18,6 @@ interface InfografikItem {
   pdf_url: string | null;
 }
 
-const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || 'http://spr-open-data.local/wp-json').replace(/\/$/, '');
-
 const FILTER_TABS = [
   { slug: '', label: 'Semua' },
   { slug: 'pru', label: 'Pilihan Raya Umum' },
@@ -43,7 +41,7 @@ export function SorotanData() {
       params.set('pru_number', '15');
     }
 
-    fetch(`${WP_API}/spr/v1/infografik?${params}`)
+    fetch(`/api/infografik?${params}`)
       .then((r) => r.json())
       .then((res) => {
         setItems((res.data || []).slice(0, 4));

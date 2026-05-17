@@ -1,3 +1,5 @@
+import { WP_API } from '@/lib/wp-api';
+
 export interface KemaskiniItem {
   day: string;
   month: string;
@@ -19,8 +21,6 @@ const FALLBACK: KemaskiniItem[] = [
     age_label: 'Baharu sahaja', latest: true,
   },
 ];
-
-const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || 'http://spr-open-data.local/wp-json').replace(/\/$/, '');
 
 export async function getKemaskini(perPage = 4): Promise<KemaskiniItem[]> {
   try {

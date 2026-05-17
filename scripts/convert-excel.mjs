@@ -14,7 +14,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, '..');
 const OUTPUT_DIR = join(PROJECT_ROOT, 'public', 'data');
 
-const WP_API_URL = process.env.NEXT_PUBLIC_WP_API_URL;
+const WP_API_URL = process.env.WP_API_URL || process.env.NEXT_PUBLIC_WP_API_URL;
 
 function fail(msg, err) {
   console.error(`\n✗ ${msg}`);
@@ -178,9 +178,9 @@ async function main() {
 
   if (!WP_API_URL) {
     fail(
-      `NEXT_PUBLIC_WP_API_URL is not set.\n` +
+      `WP_API_URL is not set.\n` +
         `  Set it in .env.local or your environment, e.g.:\n` +
-        `  NEXT_PUBLIC_WP_API_URL=https://cmsodspr.sawangville.dev/wp-json`
+        `  WP_API_URL=https://cmsodspr.sawangville.dev/wp-json`
     );
   }
 

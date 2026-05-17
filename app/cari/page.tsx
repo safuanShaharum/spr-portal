@@ -3,10 +3,9 @@ import { Search, Database, BarChart3, Image as ImageIcon } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { BAHAGIAN_LIST } from "@/lib/katalog-data";
 import { DASHBOARD_TABS } from "@/lib/dashboard-tabs";
+import { WP_API } from "@/lib/wp-api";
 
 export const dynamic = "force-dynamic";
-
-const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || "http://spr-open-data.local/wp-json").replace(/\/$/, "");
 
 const INFOGRAFIK_KATEGORI = ["pru", "dun_dn_du", "prk", "pemerhati", "kesalahan"] as const;
 
