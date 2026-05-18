@@ -14,7 +14,7 @@ import { WP_API } from "@/lib/wp-api";
 // All other catalog consumers now call lib/catalog.ts → /data/{slug}.json.
 const SHEET_MAP: Record<string, string> = {
   "undi-pos": "Statistik Undi Pos",
-  "daftar-pemilih": "Daftar Pemilih Induk 2008-2025",
+  "daftar-pemilih": "Daftar Pemilih Induk 2012-2025",
   "dppr": "DPPR PRU PRN PRK 2008 & KEATAS",
 };
 

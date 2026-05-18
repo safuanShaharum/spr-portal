@@ -39,7 +39,7 @@ const CATALOG_SLUG_MAP: Record<string, string> = {
 // (yearRange, etc). Includes API-served sheets that are not in CATALOG_SLUG_MAP.
 const INDEX_SLUG_MAP: Record<string, string> = {
   ...CATALOG_SLUG_MAP,
-  "daftar-pemilih": "daftar-pemilih-induk-2008-2025",
+  "daftar-pemilih": "daftar-pemilih-induk-2012-2025",
   "dppr": "dppr-pru-prn-prk-2008-keatas",
   "undi-pos": "statistik-undi-pos",
 };
