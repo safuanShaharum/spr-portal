@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const API_URL =
-  process.env.NEXT_PUBLIC_WP_API_URL || "http://spr-open-data.local/wp-json";
+import { WP_API as API_URL } from "@/lib/wp-api";
 
 /**
  * Proxy a WordPress-hosted file to avoid CORS issues.

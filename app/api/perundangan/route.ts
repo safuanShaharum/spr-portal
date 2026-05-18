@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
+import { WP_API } from "@/lib/wp-api";
 
 // Amendment R2 #23: proxy SPR Perundangan REST endpoint with edge cache.
 // Sources documents from ACF Options page "Peruntukan Undang-undang" via
 // /wp-json/spr/v1/perundangan → returns [{title, year, url}, ...].
-const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || "https://cmsodspr.sawangville.dev/wp-json").replace(/\/+$/, "");
 const PERUNDANGAN_URL = `${WP_API}/spr/v1/perundangan`;
 
 export const runtime = "edge";

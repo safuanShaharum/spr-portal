@@ -32,8 +32,6 @@ interface TabDef {
 // list fall to the end in API-returned order. Adjust to reorder tabs.
 const TAB_ORDER = ['pru', 'dun_dn_du', 'prk', 'pemerhati', 'kesalahan', 'persempadanan'];
 
-const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || 'http://spr-open-data.local/wp-json').replace(/\/$/, '');
-
 export default function InfografikPage() {
   const [tabs, setTabs] = useState<TabDef[]>([]);
   const [activeTab, setActiveTab] = useState<string>('');
@@ -46,7 +44,7 @@ export default function InfografikPage() {
 
   // Fetch tab list once from taxonomy, sort by preferred order
   useEffect(() => {
-    fetch(`${WP_API}/spr/v1/infografik/categories`)
+    fetch(`/api/infografik/categories`)
       .then(r => r.json())
       .then((data: TabDef[]) => {
         if (!Array.isArray(data) || data.length === 0) return;
@@ -66,7 +64,7 @@ export default function InfografikPage() {
 
   useEffect(() => {
     if (!activeTab) return;
-    fetch(`${WP_API}/spr/v1/infografik/filters?kategori=${activeTab}`)
+    fetch(`/api/infografik/filters?kategori=${encodeURIComponent(activeTab)}`)
       .then(r => r.json())
       .then(setFilters)
       .catch(console.error);
@@ -79,7 +77,7 @@ export default function InfografikPage() {
     if (selectedYear) params.set('tahun', String(selectedYear));
     if (selectedPru)  params.set('pru_number', String(selectedPru));
 
-    fetch(`${WP_API}/spr/v1/infografik?${params}`)
+    fetch(`/api/infografik?${params}`)
       .then(r => r.json())
       .then(res => {
         setItems(res.data || []);

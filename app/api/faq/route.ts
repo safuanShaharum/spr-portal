@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
+import { WP_API } from "@/lib/wp-api";
 
 // Amendment R2 #24: proxy SPR FAQ REST endpoint with edge cache.
 // Sources documents from ACF Options page "Soalan Lazim" via
 // /wp-json/spr/v1/faq → returns [{title, url}, ...].
-const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || "https://cmsodspr.sawangville.dev/wp-json").replace(/\/+$/, "");
 const FAQ_URL = `${WP_API}/spr/v1/faq`;
 
 export const runtime = "edge";

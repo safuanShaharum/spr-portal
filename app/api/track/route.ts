@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { WP_API } from "@/lib/wp-api";
 
 // Amendment R2 #18: proxy Koko Analytics collect requests from headless frontend.
 // Koko v3 optimized endpoint sits at WP root (/koko-analytics-collect.php) and
 // expects params `pa` (path), `po` (post_id), optionally `r` (referrer URL).
 // Server-to-server avoids CORS + lets us forward real client UA so Koko's bot
 // filter doesn't trip.
-const WP_API = (process.env.NEXT_PUBLIC_WP_API_URL || "https://cmsodspr.sawangville.dev/wp-json").replace(/\/+$/, "");
 const WP_BASE = WP_API.replace(/\/wp-json$/, "");
 const KOKO_URL = `${WP_BASE}/koko-analytics-collect.php`;
 

@@ -1,6 +1,5 @@
 import { Dataset, PortalStats, Category } from "@/types/dataset";
-
-const API_URL = process.env.NEXT_PUBLIC_WP_API_URL || "http://spr-open-data.local/wp-json";
+import { WP_API as API_URL } from "@/lib/wp-api";
 
 export interface DatasetsResponse {
   data: Dataset[];
