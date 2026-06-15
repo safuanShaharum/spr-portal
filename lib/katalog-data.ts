@@ -217,7 +217,7 @@ const TAB_DPPR: TabDef = {
   label: "Statistik Daftar Pemilih Pilihan Raya (DPPR)",
   description: "Bilangan pemilih berdaftar dalam Daftar Pemilih Pilihan Raya mengikut negeri, parlimen, DUN, daerah mengundi, kumpulan umur dan jantina untuk setiap pilihan raya.",
   type: "empty",
-  emptyMessage: "Data DPPR sedang dikemaskini. Sila kunjungi semula tidak lama lagi.",
+  emptyMessage: "Data DPPR sedang dikemaskini.",
   sheetSlug: "dppr",
   filters: [
     { key: "tahun", label: "Tahun", options: [] },

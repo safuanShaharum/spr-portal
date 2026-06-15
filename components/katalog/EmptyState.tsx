@@ -12,7 +12,7 @@ export default function EmptyState({ message = "Data belum tersedia" }: Props) {
         </svg>
       </div>
       <h3 className="text-lg font-semibold text-spr-navy mb-1">{message}</h3>
-      <p className="text-sm text-spr-text-muted">Sila semak semula kemudian.</p>
+      <p className="text-sm text-spr-text-muted">Mohon semak semula dalam masa terdekat.</p>
     </div>
   );
 }
