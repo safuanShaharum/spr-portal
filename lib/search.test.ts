@@ -15,6 +15,11 @@ describe('normalize', () => {
   it('returns empty string for punctuation-only input', () => {
     expect(normalize('  --- ')).toBe('');
   });
+
+  it('does not mangle words that merely contain "ke" + digit', () => {
+    expect(normalize('cake7')).toBe('cake7');
+    expect(normalize('like 2')).toBe('like 2');
+  });
 });
 
 describe('buildPopularChips', () => {
@@ -34,5 +39,18 @@ describe('buildPopularChips', () => {
 
   it('caps the result at the limit', () => {
     expect(buildPopularChips(['a', 'b', 'c', 'd'], fallback, 3)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('dedupes duplicates within backend itself', () => {
+    expect(buildPopularChips(['PRU-15', 'pru ke-15'], [], 3)).toEqual(['PRU-15']);
+  });
+
+  it('dedupes backend against fallback case/format-insensitively', () => {
+    expect(buildPopularChips(['PRU 15'], ['pru-15', 'Pemerhati Pilihan Raya'], 3))
+      .toEqual(['PRU 15', 'Pemerhati Pilihan Raya']);
+  });
+
+  it('uses a default limit of 3 when omitted', () => {
+    expect(buildPopularChips(['a', 'b', 'c', 'd'], [])).toEqual(['a', 'b', 'c']);
   });
 });

@@ -5,7 +5,8 @@
 export function normalize(s: string): string {
   return s
     .toLowerCase()
-    .replace(/ke-?(\d)/g, '$1')
+    .replace(/\bke-?(\d)/g, '$1')
+    // ASCII-only: BM/SPR queries have no diacritics; non-ASCII letters are dropped.
     .replace(/[^a-z0-9]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
