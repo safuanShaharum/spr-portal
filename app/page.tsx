@@ -6,11 +6,13 @@ import { SorotanData } from '@/components/homepage/SorotanData';
 import { DataDalamAngka } from '@/components/homepage/DataDalamAngka';
 import { TerkiniPortal } from '@/components/homepage/TerkiniPortal';
 import { PautanServisSPR } from '@/components/homepage/PautanServisSPR';
+import { getPopularSearches } from '@/lib/popular-searches';
 
-export default function HomePage() {
+export default async function HomePage() {
+  const popular = await getPopularSearches(3);
   return (
     <div className="relative">
-      <Hero />
+      <Hero popular={popular} />
       <FactTicker />
       <StorytellingCarousel />
       <CategoryCards />
