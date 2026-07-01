@@ -21,7 +21,10 @@ if (!defined('ABSPATH')) exit;
 if (!function_exists('spr_fix_internal_urls')) {
     function spr_fix_internal_urls($buffer) {
         return str_replace(
-            ['https://127.0.0.1', 'http://127.0.0.1'],
+            [
+                'https://127.0.0.1', 'http://127.0.0.1',
+                'https://10.24.131.103', 'http://10.24.131.103',
+            ],
             '',
             $buffer
         );
