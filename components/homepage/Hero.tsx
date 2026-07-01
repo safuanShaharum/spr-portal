@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Search, Database, BarChart3, Image as ImageIcon, ArrowRight, Users, MapPin, Scale, Building2, Eye, Globe2 } from 'lucide-react';
 import Link from 'next/link';
 import { Disclaimer } from '@/components/Disclaimer';
+import { buildPopularChips } from '@/lib/search';
 
 const CATEGORY_CHIPS = [
   { label: 'Penjalanan Pilihan Raya', href: '/katalog?bahagian=penjalanan-pilihan-raya', icon: BarChart3 },
@@ -16,11 +17,12 @@ const CATEGORY_CHIPS = [
   { label: 'Pemerhati Pilihan Raya',  href: '/katalog?bahagian=pemerhati-pilihan-raya',     icon: Globe2 },
 ];
 
-const POPULAR_QUERIES = ['Keputusan PRU-15', 'Kadar keluar mengundi', 'Infografik PRK 2024'];
+const POPULAR_FALLBACK = ['Keputusan PRU', 'Kadar keluar mengundi', 'Pemerhati Pilihan Raya'];
 
-export function Hero() {
+export function Hero({ popular = [] }: { popular?: string[] }) {
   const router = useRouter();
   const [query, setQuery] = useState('');
+  const popularQueries = buildPopularChips(popular, POPULAR_FALLBACK, 3);
 
   function go(q: string) {
     const trimmed = q.trim();
@@ -103,7 +105,7 @@ export function Hero() {
           {/* Quick suggestions */}
           <div className="pt-5 mt-5 flex flex-wrap items-center justify-center gap-2 border-t border-white/10">
             <span className="text-[11px] text-white/60 uppercase tracking-wider font-semibold mr-2">Popular:</span>
-            {POPULAR_QUERIES.map((q) => (
+            {popularQueries.map((q) => (
               <button
                 key={q}
                 type="button"
