@@ -132,7 +132,7 @@ const TAB_PRK: TabDef = {
 
 const TAB_UNDI_POS: TabDef = {
   label: "Pengundi Pos",
-  description: "Bilangan pengundi pos mengikut kategori 1A(Petugas SPR, Media, Tentera, Polis, Anggota/Pegawai SPR), 1B Luar Negara, 1C (Agensi/Organisasi yang diluluskan SPR).",
+  description: "Bilangan pengundi pos mengikut kategori 1A (Petugas SPR, Media, Tentera, Polis, Anggota/Pegawai SPR), 1B Luar Negara, 1C (Agensi/Organisasi yang diluluskan SPR).",
   type: "table",
   sheetSlug: "undi-pos",
   filters: [
