@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node --env-file-if-exists=.env.local scripts/convert-excel.mjs",
+    "prebuild": "node --env-file-if-exists=.env.local scripts/convert-excel.mjs && node scripts/build-kawasan-index.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

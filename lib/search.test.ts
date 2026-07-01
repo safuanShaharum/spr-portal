@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { normalize, buildPopularChips, detectPruYear } from './search';
+import { normalize, buildPopularChips, detectPruYear, matchKawasan } from './search';
+import type { KawasanEntry } from './search';
 
 describe('normalize', () => {
   it('collapses PRU variants to one key', () => {
@@ -73,5 +74,38 @@ describe('detectPruYear', () => {
     expect(detectPruYear('prk')).toBeNull();
     expect(detectPruYear('pru 99')).toBeNull();
     expect(detectPruYear('2019')).toBeNull();
+  });
+});
+
+describe('matchKawasan', () => {
+  const index: KawasanEntry[] = [
+    { name: 'N.25 KAJANG', type: 'dun', negeri: 'SELANGOR' },
+    { name: 'P.004 LANGKAWI', type: 'parlimen', negeri: 'KEDAH' },
+    { name: 'N.01 PADANG BESAR', type: 'dun', negeri: 'PERLIS' },
+    { name: 'P.001 PADANG BESAR', type: 'parlimen', negeri: 'PERLIS' },
+  ];
+
+  it('finds a DUN by name', () => {
+    expect(matchKawasan(index, 'kajang')).toEqual([
+      { name: 'N.25 KAJANG', type: 'dun', negeri: 'SELANGOR' },
+    ]);
+  });
+
+  it('finds a parlimen by name', () => {
+    expect(matchKawasan(index, 'langkawi')).toEqual([
+      { name: 'P.004 LANGKAWI', type: 'parlimen', negeri: 'KEDAH' },
+    ]);
+  });
+
+  it('requires all >=2-char tokens to match (name + negeri)', () => {
+    expect(matchKawasan(index, 'padang perlis').map((e) => e.name)).toEqual([
+      'N.01 PADANG BESAR',
+      'P.001 PADANG BESAR',
+    ]);
+  });
+
+  it('returns empty when nothing matches or query has no usable token', () => {
+    expect(matchKawasan(index, 'xyzland')).toEqual([]);
+    expect(matchKawasan(index, 'a')).toEqual([]);
   });
 });

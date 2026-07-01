@@ -70,6 +70,7 @@ const TAB_PRU_PARLIMEN: TabDef = {
   filters: [
     { key: "tahun", label: "Tahun PRU", options: [] },
     { key: "negeri", label: "Negeri", options: [] },
+    { key: "kawasan", label: "Kawasan", options: [] },
   ],
   columns: [
     { key: "TAHUN PILIHAN RAYA", header: "TAHUN", type: "string" },
@@ -92,6 +93,7 @@ const TAB_PRU_DUN: TabDef = {
   filters: [
     { key: "tahun", label: "Tahun PRU", options: [] },
     { key: "negeri", label: "Negeri", options: [] },
+    { key: "kawasan", label: "Kawasan", options: [] },
   ],
   columns: [
     { key: "TAHUN PILIHAN RAYA", header: "TAHUN", type: "string" },

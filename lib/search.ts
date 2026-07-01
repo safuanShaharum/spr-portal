@@ -34,6 +34,31 @@ export function detectPruYear(query: string): string | null {
   return null;
 }
 
+// A constituency entry in the build-time kawasan index (public/data/_kawasan-index.json).
+export interface KawasanEntry {
+  name: string; // exact column value, e.g. "P.004 LANGKAWI" / "N.25 KAJANG"
+  type: 'parlimen' | 'dun';
+  negeri: string;
+}
+
+// Match a search query against the constituency index. Tokens of length >= 2 must
+// all be found in the entry's "name negeri" haystack. Ranked by match count, capped.
+export function matchKawasan(index: KawasanEntry[], query: string, limit = 20): KawasanEntry[] {
+  const tokens = normalize(query).split(' ').filter((t) => t.length >= 2);
+  if (!tokens.length) return [];
+  const scored: { entry: KawasanEntry; score: number }[] = [];
+  for (const entry of index) {
+    const hay = normalize(`${entry.name} ${entry.negeri}`);
+    let score = 0;
+    for (const t of tokens) if (hay.includes(t)) score++;
+    if (score === tokens.length) scored.push({ entry, score });
+  }
+  return scored
+    .sort((a, b) => b.score - a.score || a.entry.name.localeCompare(b.entry.name))
+    .slice(0, limit)
+    .map((s) => s.entry);
+}
+
 // Build the homepage popular-search chips: real backend queries first, then
 // top up from the curated fallback, deduped by normalized key, capped at limit.
 export function buildPopularChips(
