@@ -542,6 +542,10 @@ Verify the full loop per Task 2 Step 3, then confirm the homepage chips reflect 
 
 ## Notes
 
-- The WP snippet must be installed on cmsodspr for tracking to work. Until then, endpoints 404, `getPopularSearches` returns `[]`, and chips show the curated fallback — the homepage stays fully functional.
+- **The WP snippet must be installed on BOTH WordPress instances**, because there are two independent stacks (each frontend calls its own WP):
+  - `cmsodspr.sawangville.dev` — WordPress for the Vercel frontend (staging).
+  - `10.24.131.103` (via `/wp-admin` → Code Snippets) — WordPress for the SPR production portal (`http://10.24.131.103/`), same box as the Next.js app.
+- WP snippets are NOT part of the frontend repo — they live in the WordPress Code Snippets plugin (WP DB). The `wp-snippets/*.php` files in this repo are reference copies only; pulling the frontend into Gitea does not install them. The backup restored from cmsodspr → 10.24.131.103 predates this snippet, so it must be installed on 10.24.131.103 manually.
+- Search counts are per-WP-instance (two separate DBs) and do not merge — each portal shows its own users' popular searches.
+- Until the snippet is installed on a given WP, its endpoints 404, `getPopularSearches` returns `[]`, and chips show the curated fallback — the homepage stays fully functional.
 - Endpoints are public; nothing secret is committed.
-- Works identically on Vercel and the SPR server because both hit the shared `WP_API`.

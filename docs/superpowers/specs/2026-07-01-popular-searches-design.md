@@ -126,10 +126,16 @@ Backend unavailable → logging silently skipped; chips fall back to the curated
 
 ## Deployment Notes
 
-- New WP snippet `spr-search-tracker.php` must be installed manually on cmsodspr. Until then
-  the endpoints 404 and chips use the curated fallback (still functional).
+- There are two independent stacks, each frontend calling its own WordPress:
+  - Vercel frontend → `cmsodspr.sawangville.dev` WP (staging).
+  - SPR production portal `http://10.24.131.103/` → WP on the same box (`10.24.131.103/wp-json`).
+- New WP snippet `spr-search-tracker.php` must be installed **manually on BOTH WP instances**
+  (WP Code Snippets, "Run everywhere", Activate). WP snippets are not part of the frontend
+  repo; the backup restored to 10.24.131.103 predates this snippet.
+- Until installed on a given WP, its endpoints 404 and chips use the curated fallback (still
+  functional).
+- Search counts are per-WP-instance and do not merge across the two.
 - Endpoints are public; no secret/token to commit.
-- Works on both Vercel and the SPR server because both hit the shared `WP_API`.
 
 ## Out of Scope (YAGNI)
 
