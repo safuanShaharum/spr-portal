@@ -14,6 +14,7 @@ import EmptyState from "@/components/katalog/EmptyState";
 import ElectionModal from "@/components/katalog/ElectionModal";
 import DetailModal from "@/components/katalog/DetailModal";
 import { getCatalogData, getCatalogIndex } from "@/lib/catalog";
+import { mergeNegeriOptions } from "@/lib/negeri";
 import { PageHeader } from "@/components/PageHeader";
 
 type Row = Record<string, unknown>;
@@ -196,7 +197,7 @@ function extractFilterOptions(rows: Row[]): Record<string, string[]> {
     }
   }
   return {
-    negeri: Array.from(negeri).sort(),
+    negeri: mergeNegeriOptions(Array.from(negeri)),
     tahun: Array.from(tahun).sort((a, b) => yearKey(b) - yearKey(a)),
     pilihanRaya: Array.from(pilihanRaya).sort(),
     kawasan: Array.from(kawasan).sort(),

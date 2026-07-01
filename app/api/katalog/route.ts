@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import { WP_API } from "@/lib/wp-api";
+import { mergeNegeriOptions } from "@/lib/negeri";
 
 /* ------------------------------------------------------------------ */
 /*  Sheet slug → Excel sheet name mapping                              */
@@ -294,7 +295,7 @@ export async function GET(req: NextRequest) {
     }
 
     const filterOptions = {
-      negeri: Array.from(uniqueNegeri).sort(),
+      negeri: mergeNegeriOptions(Array.from(uniqueNegeri)),
       tahun: Array.from(uniqueTahun).sort((a, b) => {
         const aNum = parseInt(a.replace(/\D/g, "").slice(-4), 10) || 0;
         const bNum = parseInt(b.replace(/\D/g, "").slice(-4), 10) || 0;
