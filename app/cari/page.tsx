@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Search, Database, BarChart3, Image as ImageIcon } from "lucide-react";
+import { Search, Database, BarChart3, Image as ImageIcon, MapPin } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { BAHAGIAN_LIST } from "@/lib/katalog-data";
 import { DASHBOARD_TABS } from "@/lib/dashboard-tabs";
 import { WP_API } from "@/lib/wp-api";
-import { normalize, detectPruYear } from "@/lib/search";
+import { normalize, detectPruYear, matchKawasan, type KawasanEntry } from "@/lib/search";
+import { getKawasanIndex } from "@/lib/kawasan";
 import { logSearch } from "@/lib/popular-searches";
 
 export const dynamic = "force-dynamic";
@@ -37,6 +38,13 @@ interface InfografikHit {
   title: string;
   caption: string;
   kategori: string;
+}
+
+interface KawasanHit {
+  name: string;
+  type: "parlimen" | "dun";
+  negeri: string;
+  href: string;
 }
 
 // Bidirectional synonym expansion so abbreviations and full forms match.
@@ -82,6 +90,30 @@ async function fetchInfografik(): Promise<InfografikItem[]> {
   } catch {
     return [];
   }
+}
+
+// Locate the {bahagianSlug, tabIndex} for a given sheet slug in BAHAGIAN_LIST.
+function findTabLocation(sheetSlug: string): { bahagianSlug: string; tabIndex: number } | null {
+  for (const b of BAHAGIAN_LIST) {
+    const idx = b.tabs.findIndex((t) => t.sheetSlug === sheetSlug);
+    if (idx !== -1) return { bahagianSlug: b.slug, tabIndex: idx };
+  }
+  return null;
+}
+
+// Content search over the constituency index → deep-links into the Keputusan PRU
+// (Parlimen/DUN) katalog tabs with the kawasan pre-filtered.
+function searchKawasan(index: KawasanEntry[], query: string): KawasanHit[] {
+  const parlimenLoc = findTabLocation("keputusan-pru");
+  const dunLoc = findTabLocation("keputusan-dun");
+  const hits: KawasanHit[] = [];
+  for (const e of matchKawasan(index, query)) {
+    const loc = e.type === "dun" ? dunLoc : parlimenLoc;
+    if (!loc) continue;
+    const href = `/katalog?bahagian=${encodeURIComponent(loc.bahagianSlug)}&tab=${loc.tabIndex}&kawasan=${encodeURIComponent(e.name)}`;
+    hits.push({ name: e.name, type: e.type, negeri: e.negeri, href });
+  }
+  return hits;
 }
 
 function searchKatalog(tokens: string[]): KatalogHit[] {
@@ -145,17 +177,19 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const tokens = tokenize(rawQuery);
   const pruYear = detectPruYear(rawQuery);
 
+  let kawasanHits: KawasanHit[] = [];
   let katalogHits: KatalogHit[] = [];
   let dashboardHits: DashboardHit[] = [];
   let infografikHits: InfografikHit[] = [];
   let total = 0;
 
   if (tokens.length) {
+    kawasanHits = searchKawasan(await getKawasanIndex(), rawQuery);
     katalogHits = searchKatalog(tokens);
     dashboardHits = searchDashboard(tokens);
     const allInfografik = await fetchInfografik();
     infografikHits = searchInfografik(allInfografik, tokens);
-    total = katalogHits.length + dashboardHits.length + infografikHits.length;
+    total = kawasanHits.length + katalogHits.length + dashboardHits.length + infografikHits.length;
     if (total > 0) {
       await logSearch(rawQuery, total);
     }
@@ -183,6 +217,23 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
         {rawQuery && total === 0 && (
           <NoResults query={rawQuery} />
+        )}
+
+        {kawasanHits.length > 0 && (
+          <ResultGroup
+            icon={<MapPin className="w-5 h-5" />}
+            title="Kawasan"
+            count={kawasanHits.length}
+          >
+            {kawasanHits.map((h, i) => (
+              <ResultRow
+                key={`kw-${i}`}
+                href={h.href}
+                title={h.name}
+                subtitle={`${h.type === "dun" ? "DUN" : "Parlimen"} · ${h.negeri}`}
+              />
+            ))}
+          </ResultGroup>
         )}
 
         {katalogHits.length > 0 && (

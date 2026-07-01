@@ -112,6 +112,7 @@ interface KatalogQuery {
   negeri?: string;
   tahun?: string;
   pilihanRaya?: string;
+  kawasan?: string;
   jenisCalon?: string;
   statusCalon?: string;
 }
@@ -145,6 +146,16 @@ function filterRows(rows: Row[], q: KatalogQuery): Row[] {
       return false;
     });
   }
+  if (q.kawasan) {
+    const needle = q.kawasan.toLowerCase();
+    out = out.filter((r) => {
+      for (const col of ["PARLIMEN", "DEWAN UNDANGAN NEGERI"]) {
+        const val = String(r[col] || "").toLowerCase();
+        if (val && val.includes(needle)) return true;
+      }
+      return false;
+    });
+  }
   if (q.jenisCalon) {
     out = out.filter(
       (r) => String(r["JenisCalon"] || "").toLowerCase() === q.jenisCalon!.toLowerCase()
@@ -164,6 +175,7 @@ function extractFilterOptions(rows: Row[]): Record<string, string[]> {
   const negeri = new Set<string>();
   const tahun = new Set<string>();
   const pilihanRaya = new Set<string>();
+  const kawasan = new Set<string>();
   for (const r of rows) {
     for (const col of ["NEGERI", "Negeri", "NegeriPemohon"]) {
       const v = String(r[col] || "").trim();
@@ -177,11 +189,17 @@ function extractFilterOptions(rows: Row[]): Record<string, string[]> {
       const v = String(r[col] || "").trim();
       if (v) pilihanRaya.add(v);
     }
+    // Kawasan options = clean Parlimen + DUN names (union; skips "-"/blank).
+    for (const col of ["PARLIMEN", "DEWAN UNDANGAN NEGERI"]) {
+      const v = String(r[col] || "").trim();
+      if (v && v !== "-" && v.length >= 3) kawasan.add(v);
+    }
   }
   return {
     negeri: Array.from(negeri).sort(),
     tahun: Array.from(tahun).sort((a, b) => yearKey(b) - yearKey(a)),
     pilihanRaya: Array.from(pilihanRaya).sort(),
+    kawasan: Array.from(kawasan).sort(),
   };
 }
 
@@ -198,6 +216,7 @@ function KatalogContent() {
   const urlBahagian = searchParams.get("bahagian") || "";
   const urlTab = searchParams.get("tab");
   const urlTahun = searchParams.get("tahun") || "";
+  const urlKawasan = searchParams.get("kawasan") || "";
 
   const [activeBahagianSlug, setActiveBahagianSlug] = useState(() => {
     const match = BAHAGIAN_LIST.find((b) => b.slug === urlBahagian);
@@ -210,6 +229,7 @@ function KatalogContent() {
   const [filters, setFilters] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
     if (urlTahun) init.tahun = urlTahun;
+    if (urlKawasan) init.kawasan = urlKawasan;
     return init;
   });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -221,13 +241,16 @@ function KatalogContent() {
       const match = BAHAGIAN_LIST.find((b) => b.slug === urlBahagian);
       if (match && match.slug !== activeBahagianSlug) {
         const n = urlTab ? parseInt(urlTab, 10) : NaN;
+        const next: Record<string, string> = {};
+        if (urlTahun) next.tahun = urlTahun;
+        if (urlKawasan) next.kawasan = urlKawasan;
         setActiveBahagianSlug(match.slug);
         setActiveTabIndex(Number.isInteger(n) && n >= 0 ? n : 0);
-        setFilters(urlTahun ? { tahun: urlTahun } : {});
+        setFilters(next);
         setApiPage(1);
       }
     }
-  }, [urlBahagian, urlTab, urlTahun]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [urlBahagian, urlTab, urlTahun, urlKawasan]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Year-range metadata fetched once from /data/_index.json
   const [yearRangeMap, setYearRangeMap] = useState<Record<string, string>>({});
@@ -339,6 +362,7 @@ function KatalogContent() {
             negeri: filters.negeri,
             tahun: filters.tahun,
             pilihanRaya: filters.pilihanRaya,
+            kawasan: filters.kawasan,
           });
 
           // Sort by year desc when a year column is present
