@@ -37,7 +37,9 @@ export default function PemantauanOperasi() {
       ceramah: getVal(r, "CERAMAH TANPA PERMIT"),
       bahanKempen: getVal(r, "BAHAN KEMPEN"),
       hariMengundi: getVal(r, "HARI MENGUNDI"),
-    })),
+    }))
+    // Drop trailing blank rows (no Pilihan Raya) from the source data.
+    .filter((r) => r.pr !== ""),
     [data]
   );
 
