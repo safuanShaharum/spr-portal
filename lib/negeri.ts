@@ -28,8 +28,9 @@ export function mergeNegeriOptions(dataValues: string[]): string[] {
   const extra = new Set<string>();
   for (const v of dataValues) {
     const t = v.trim();
-    // Skip junk placeholders like "-" or blanks; keep only real names (has a letter).
-    if (t && /[a-z]/i.test(t) && !seen.has(t.toUpperCase())) extra.add(t);
+    // Keep real names (has a letter) plus the "-" national/PRU marker (shown as
+    // "PRU" in the UI). Drops blanks/whitespace-only junk.
+    if (t && (/[a-z]/i.test(t) || t === "-") && !seen.has(t.toUpperCase())) extra.add(t);
   }
   return [...MALAYSIA_NEGERI, ...Array.from(extra).sort()];
 }

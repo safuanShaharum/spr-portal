@@ -25,7 +25,10 @@ export default function FilterRow({ filters, values, onChange, onReset }: Props)
           >
             <option value="">{f.label}</option>
             {f.options.map((o) => (
-              <option key={o} value={o}>{o}</option>
+              <option key={o} value={o}>
+                {/* "-" negeri = national/PRU-level entry; show as "PRU" */}
+                {f.key === "negeri" && o === "-" ? "PRU" : o}
+              </option>
             ))}
           </select>
         ))}
