@@ -215,6 +215,8 @@ const TAB_DPI: TabDef = {
 };
 
 // TODO: Re-enable DPPR after SPR provides updated data (amendment R2 #22)
+// HIDDEN (SPR request): TAB_DPPR removed from "Pendaftaran Pemilih" tabs; kept here for restore.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TAB_DPPR: TabDef = {
   label: "Statistik Daftar Pemilih Pilihan Raya (DPPR)",
   description: "Bilangan pemilih berdaftar dalam Daftar Pemilih Pilihan Raya mengikut negeri, parlimen, DUN, daerah mengundi, kumpulan umur dan jantina untuk setiap pilihan raya.",
@@ -409,23 +411,27 @@ export const BAHAGIAN_LIST: BahagianDef[] = [
   {
     slug: "penjalanan-pilihan-raya",
     label: "Penjalanan Pilihan Raya",
-    count: 7,
+    count: 6, // HIDDEN (SPR request): Pengundi Awal disembunyikan — restore: count 7
     tabs: [TAB_PRU_PARLIMEN, TAB_PRU_DUN, TAB_PRK, TAB_UNDI_POS,
-      { label: "Pengundi Awal", description: "Bilangan pengundi awal mengikut kategori dan kawasan.", type: "empty", sheetSlug: "pengundi-awal", emptyMessage: "Data belum tersedia" },
+      // HIDDEN (SPR request): uncomment to restore + bump count above to 7
+      // { label: "Pengundi Awal", description: "Bilangan pengundi awal mengikut kategori dan kawasan.", type: "empty", sheetSlug: "pengundi-awal", emptyMessage: "Data belum tersedia" },
       TAB_NOTIS_WARTA, TAB_SIMBOL_PARTI],
   },
   {
     slug: "pendaftaran-pemilih",
     label: "Pendaftaran Pemilih",
-    count: 2,
-    tabs: [TAB_DPI, TAB_DPPR],
+    count: 1, // HIDDEN (SPR request): DPPR disembunyikan — restore: count 2
+    // HIDDEN (SPR request): restore DPPR → tabs: [TAB_DPI, TAB_DPPR]
+    tabs: [TAB_DPI],
   },
   {
     slug: "persempadanan",
     label: "Persempadanan",
-    count: 3,
+    count: 2, // HIDDEN (SPR request): Statistik Pertambahan BPR disembunyikan — restore: count 3
     tabs: [TAB_SENARAI_BPR, TAB_PUSAT_MENGUNDI,
-      { label: "Statistik Pertambahan BPR", description: "Statistik pertambahan Bahagian Pilihan Raya hasil persempadanan semula mengikut tahun.", type: "empty", emptyMessage: "Data akan datang" }],
+      // HIDDEN (SPR request): uncomment to restore + bump count above to 3
+      // { label: "Statistik Pertambahan BPR", description: "Statistik pertambahan Bahagian Pilihan Raya hasil persempadanan semula mengikut tahun.", type: "empty", emptyMessage: "Data akan datang" },
+    ],
   },
   {
     slug: "perundangan",
