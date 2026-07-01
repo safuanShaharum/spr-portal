@@ -28,7 +28,8 @@ export function mergeNegeriOptions(dataValues: string[]): string[] {
   const extra = new Set<string>();
   for (const v of dataValues) {
     const t = v.trim();
-    if (t && !seen.has(t.toUpperCase())) extra.add(t);
+    // Skip junk placeholders like "-" or blanks; keep only real names (has a letter).
+    if (t && /[a-z]/i.test(t) && !seen.has(t.toUpperCase())) extra.add(t);
   }
   return [...MALAYSIA_NEGERI, ...Array.from(extra).sort()];
 }
