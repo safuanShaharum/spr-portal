@@ -36,8 +36,44 @@ interface InfografikHit {
   kategori: string;
 }
 
-function matches(haystack: string, needle: string) {
-  return haystack.toLowerCase().includes(needle);
+// Normalise text for search: lowercase, "ke-15"/"ke15" -> "15",
+// strip punctuation, collapse whitespace.
+function normalize(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/ke-?(\d)/g, "$1")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+// Bidirectional synonym expansion so abbreviations and full forms match.
+function withAliases(normalized: string): string {
+  let out = ` ${normalized} `;
+  const add = (probe: RegExp, extra: string) => {
+    if (probe.test(out)) out += ` ${extra}`;
+  };
+  add(/ pru /, "pilihan raya umum");
+  add(/ prk /, "pilihan raya kecil");
+  add(/ dun /, "dewan undangan negeri");
+  add(/pilihan raya umum/, "pru");
+  add(/pilihan raya kecil/, "prk");
+  add(/dewan undangan negeri/, "dun");
+  return out;
+}
+
+function tokenize(q: string): string[] {
+  return Array.from(new Set(normalize(q).split(" ").filter(Boolean)));
+}
+
+// Relevance score = number of query tokens found in the haystack.
+function scoreOf(haystack: string, tokens: string[]): number {
+  const hay = withAliases(normalize(haystack));
+  let score = 0;
+  for (const t of tokens) {
+    if (hay.includes(t)) score++;
+  }
+  return score;
 }
 
 async function fetchInfografik(): Promise<InfografikItem[]> {
@@ -56,35 +92,55 @@ async function fetchInfografik(): Promise<InfografikItem[]> {
   }
 }
 
-function searchKatalog(q: string): KatalogHit[] {
-  const hits: KatalogHit[] = [];
+function searchKatalog(tokens: string[]): KatalogHit[] {
+  const scored: { hit: KatalogHit; score: number }[] = [];
   for (const b of BAHAGIAN_LIST) {
-    if (matches(b.label, q)) {
-      hits.push({ bahaganLabel: b.label, bahagianSlug: b.slug });
+    const bScore = scoreOf(b.label, tokens);
+    if (bScore > 0) {
+      scored.push({ hit: { bahaganLabel: b.label, bahagianSlug: b.slug }, score: bScore });
     }
     b.tabs.forEach((t, i) => {
-      if (matches(t.label, q)) {
-        hits.push({
-          bahaganLabel: b.label,
-          bahagianSlug: b.slug,
-          tabLabel: t.label,
-          tabIndex: i,
+      const haystack = `${t.label} ${t.description ?? ""} ${b.label}`;
+      const score = scoreOf(haystack, tokens);
+      if (score > 0) {
+        scored.push({
+          hit: {
+            bahaganLabel: b.label,
+            bahagianSlug: b.slug,
+            tabLabel: t.label,
+            tabIndex: i,
+          },
+          score,
         });
       }
     });
   }
-  return hits;
+  return scored.sort((a, b) => b.score - a.score).map((s) => s.hit);
 }
 
-function searchDashboard(q: string): DashboardHit[] {
-  return DASHBOARD_TABS.filter((t) => matches(t.label, q));
+function searchDashboard(tokens: string[]): DashboardHit[] {
+  return DASHBOARD_TABS.map((t) => ({ t, score: scoreOf(t.label, tokens) }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map((x) => ({ slug: x.t.slug, label: x.t.label }));
 }
 
-function searchInfografik(items: InfografikItem[], q: string): InfografikHit[] {
+function searchInfografik(items: InfografikItem[], tokens: string[]): InfografikHit[] {
   return items
-    .filter((i) => matches(i.title || "", q) || matches(i.caption || "", q))
+    .map((i) => {
+      const haystack = [
+        i.title || "",
+        i.caption || "",
+        i.kategori || "",
+        i.pru_number ? `pru ${i.pru_number}` : "",
+        i.tahun ? `${i.tahun}` : "",
+      ].join(" ");
+      return { i, score: scoreOf(haystack, tokens) };
+    })
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score)
     .slice(0, 50)
-    .map((i) => ({ title: i.title, caption: i.caption, kategori: i.kategori }));
+    .map((x) => ({ title: x.i.title, caption: x.i.caption, kategori: x.i.kategori }));
 }
 
 interface SearchPageProps {
@@ -93,18 +149,18 @@ interface SearchPageProps {
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const rawQuery = searchParams.q?.trim() ?? "";
-  const q = rawQuery.toLowerCase();
+  const tokens = tokenize(rawQuery);
 
   let katalogHits: KatalogHit[] = [];
   let dashboardHits: DashboardHit[] = [];
   let infografikHits: InfografikHit[] = [];
   let total = 0;
 
-  if (q) {
-    katalogHits = searchKatalog(q);
-    dashboardHits = searchDashboard(q);
+  if (tokens.length) {
+    katalogHits = searchKatalog(tokens);
+    dashboardHits = searchDashboard(tokens);
     const allInfografik = await fetchInfografik();
-    infografikHits = searchInfografik(allInfografik, q);
+    infografikHits = searchInfografik(allInfografik, tokens);
     total = katalogHits.length + dashboardHits.length + infografikHits.length;
   }
 
