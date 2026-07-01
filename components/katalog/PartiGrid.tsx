@@ -18,7 +18,7 @@ export default function PartiGrid() {
             >
               <div className="w-16 h-16 flex items-center justify-center">
                 <Image
-                  src={`/images/parti/${p.logo}`}
+                  src={`/images/parti-new-2026/${p.logo}`}
                   alt={p.singkatan}
                   width={64}
                   height={64}

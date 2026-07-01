@@ -115,7 +115,7 @@ export default function PartiPolitik() {
               className="bg-white border border-spr-border rounded-xl p-4 text-center hover:shadow-md hover:border-spr-primary/20 transition-all">
               <div className="w-16 h-16 mx-auto mb-3 relative">
                 <Image
-                  src={`/images/parti/${p.logo}`}
+                  src={`/images/parti-new-2026/${p.logo}`}
                   alt={p.singkatan}
                   width={64}
                   height={64}
