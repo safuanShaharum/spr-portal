@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { normalize, buildPopularChips } from './search';
+import { normalize, buildPopularChips, detectPruYear } from './search';
 
 describe('normalize', () => {
   it('collapses PRU variants to one key', () => {
@@ -52,5 +52,26 @@ describe('buildPopularChips', () => {
 
   it('uses a default limit of 3 when omitted', () => {
     expect(buildPopularChips(['a', 'b', 'c', 'd'], [])).toEqual(['a', 'b', 'c']);
+  });
+});
+
+describe('detectPruYear', () => {
+  it('maps a PRU number to its election year across formats', () => {
+    expect(detectPruYear('pru 14')).toBe('2018');
+    expect(detectPruYear('keputusan pru 15')).toBe('2022');
+    expect(detectPruYear('PRU-13')).toBe('2013');
+    expect(detectPruYear('pru ke-12')).toBe('2008');
+    expect(detectPruYear('pru14')).toBe('2018');
+  });
+
+  it('accepts an explicit known election year', () => {
+    expect(detectPruYear('keputusan 2018')).toBe('2018');
+  });
+
+  it('returns null when there is no PRU number or known year', () => {
+    expect(detectPruYear('pru')).toBeNull();
+    expect(detectPruYear('prk')).toBeNull();
+    expect(detectPruYear('pru 99')).toBeNull();
+    expect(detectPruYear('2019')).toBeNull();
   });
 });

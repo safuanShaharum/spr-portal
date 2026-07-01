@@ -12,6 +12,28 @@ export function normalize(s: string): string {
     .trim();
 }
 
+// PRU number → election year. Used to deep-link search results to the right year.
+export const PRU_NUMBER_TO_YEAR: Record<string, string> = {
+  '12': '2008',
+  '13': '2013',
+  '14': '2018',
+  '15': '2022',
+};
+
+const VALID_PRU_YEARS = new Set(Object.values(PRU_NUMBER_TO_YEAR));
+
+// Detect a target PRU election year from a search query.
+// "pru 14" / "pru-14" / "pru ke-14" / "pru14" -> "2018"; explicit "2018" -> "2018".
+// Returns null when there is no PRU number or known election year.
+export function detectPruYear(query: string): string | null {
+  const q = query.toLowerCase();
+  const pru = q.match(/pru[\s-]*(?:ke[\s-]*)?(\d{1,2})/);
+  if (pru && PRU_NUMBER_TO_YEAR[pru[1]]) return PRU_NUMBER_TO_YEAR[pru[1]];
+  const year = q.match(/\b(20\d{2})\b/);
+  if (year && VALID_PRU_YEARS.has(year[1])) return year[1];
+  return null;
+}
+
 // Build the homepage popular-search chips: real backend queries first, then
 // top up from the curated fallback, deduped by normalized key, capped at limit.
 export function buildPopularChips(

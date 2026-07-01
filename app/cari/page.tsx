@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { BAHAGIAN_LIST } from "@/lib/katalog-data";
 import { DASHBOARD_TABS } from "@/lib/dashboard-tabs";
 import { WP_API } from "@/lib/wp-api";
-import { normalize } from "@/lib/search";
+import { normalize, detectPruYear } from "@/lib/search";
 import { logSearch } from "@/lib/popular-searches";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +25,7 @@ interface KatalogHit {
   bahagianSlug: string;
   tabLabel?: string;
   tabIndex?: number;
+  sheetSlug?: string;
 }
 
 interface DashboardHit {
@@ -100,6 +101,7 @@ function searchKatalog(tokens: string[]): KatalogHit[] {
             bahagianSlug: b.slug,
             tabLabel: t.label,
             tabIndex: i,
+            sheetSlug: t.sheetSlug,
           },
           score,
         });
@@ -141,6 +143,7 @@ interface SearchPageProps {
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const rawQuery = searchParams.q?.trim() ?? "";
   const tokens = tokenize(rawQuery);
+  const pruYear = detectPruYear(rawQuery);
 
   let katalogHits: KatalogHit[] = [];
   let dashboardHits: DashboardHit[] = [];
@@ -189,8 +192,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             count={katalogHits.length}
           >
             {katalogHits.map((h, i) => {
+              const yearAware = h.sheetSlug === "keputusan-pru" || h.sheetSlug === "keputusan-dun";
+              const tahunParam = pruYear && yearAware ? `&tahun=${pruYear}` : "";
               const href = h.tabLabel
-                ? `/katalog?bahagian=${encodeURIComponent(h.bahagianSlug)}&tab=${h.tabIndex}`
+                ? `/katalog?bahagian=${encodeURIComponent(h.bahagianSlug)}&tab=${h.tabIndex}${tahunParam}`
                 : `/katalog?bahagian=${encodeURIComponent(h.bahagianSlug)}`;
               return (
                 <ResultRow
@@ -213,7 +218,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             {dashboardHits.map((h) => (
               <ResultRow
                 key={`d-${h.slug}`}
-                href={`/dashboard?tab=${h.slug}`}
+                href={`/dashboard?tab=${h.slug}${pruYear && h.slug === "keputusan-pru" ? `&tahun=${pruYear}` : ""}`}
                 title={h.label}
                 subtitle="Visualisasi interaktif"
               />
