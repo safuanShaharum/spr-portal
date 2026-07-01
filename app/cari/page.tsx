@@ -4,6 +4,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { BAHAGIAN_LIST } from "@/lib/katalog-data";
 import { DASHBOARD_TABS } from "@/lib/dashboard-tabs";
 import { WP_API } from "@/lib/wp-api";
+import { normalize } from "@/lib/search";
+import { logSearch } from "@/lib/popular-searches";
 
 export const dynamic = "force-dynamic";
 
@@ -34,17 +36,6 @@ interface InfografikHit {
   title: string;
   caption: string;
   kategori: string;
-}
-
-// Normalise text for search: lowercase, "ke-15"/"ke15" -> "15",
-// strip punctuation, collapse whitespace.
-function normalize(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/ke-?(\d)/g, "$1")
-    .replace(/[^a-z0-9]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
 }
 
 // Bidirectional synonym expansion so abbreviations and full forms match.
@@ -162,6 +153,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     const allInfografik = await fetchInfografik();
     infografikHits = searchInfografik(allInfografik, tokens);
     total = katalogHits.length + dashboardHits.length + infografikHits.length;
+    if (total > 0) {
+      await logSearch(rawQuery, total);
+    }
   }
 
   return (
