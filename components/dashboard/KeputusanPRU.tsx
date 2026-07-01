@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { getCatalogData } from "@/lib/catalog";
 import { COALITION_COLORS, PRU_INFO } from "@/lib/parti-colors";
 import InfoCard from "./InfoCard";
@@ -24,9 +25,13 @@ function getCoalition(parti: string): string {
 }
 
 export default function KeputusanPRU() {
+  const searchParams = useSearchParams();
+  const urlTahun = searchParams.get("tahun");
   const [allData, setAllData] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedYear, setSelectedYear] = useState("2022");
+  const [selectedYear, setSelectedYear] = useState(
+    urlTahun && ["2022", "2018", "2013", "2008"].includes(urlTahun) ? urlTahun : "2022"
+  );
 
   // Fetch ALL keputusan-pru data at once (no server-side tahun filter)
   useEffect(() => {

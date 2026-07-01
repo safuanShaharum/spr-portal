@@ -196,28 +196,38 @@ export default function KatalogPage() {
 function KatalogContent() {
   const searchParams = useSearchParams();
   const urlBahagian = searchParams.get("bahagian") || "";
+  const urlTab = searchParams.get("tab");
+  const urlTahun = searchParams.get("tahun") || "";
 
   const [activeBahagianSlug, setActiveBahagianSlug] = useState(() => {
     const match = BAHAGIAN_LIST.find((b) => b.slug === urlBahagian);
     return match ? match.slug : BAHAGIAN_LIST[0].slug;
   });
-  const [activeTabIndex, setActiveTabIndex] = useState(0);
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [activeTabIndex, setActiveTabIndex] = useState(() => {
+    const n = urlTab ? parseInt(urlTab, 10) : NaN;
+    return Number.isInteger(n) && n >= 0 ? n : 0;
+  });
+  const [filters, setFilters] = useState<Record<string, string>>(() => {
+    const init: Record<string, string> = {};
+    if (urlTahun) init.tahun = urlTahun;
+    return init;
+  });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [modalRow, setModalRow] = useState<Record<string, unknown> | null>(null);
 
-  // Sync URL param → state
+  // Sync URL param → state (also honours &tab= and &tahun= deep-links from search)
   useEffect(() => {
     if (urlBahagian) {
       const match = BAHAGIAN_LIST.find((b) => b.slug === urlBahagian);
       if (match && match.slug !== activeBahagianSlug) {
+        const n = urlTab ? parseInt(urlTab, 10) : NaN;
         setActiveBahagianSlug(match.slug);
-        setActiveTabIndex(0);
-        setFilters({});
+        setActiveTabIndex(Number.isInteger(n) && n >= 0 ? n : 0);
+        setFilters(urlTahun ? { tahun: urlTahun } : {});
         setApiPage(1);
       }
     }
-  }, [urlBahagian]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [urlBahagian, urlTab, urlTahun]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Year-range metadata fetched once from /data/_index.json
   const [yearRangeMap, setYearRangeMap] = useState<Record<string, string>>({});
