@@ -6,7 +6,11 @@ import { WP_API } from "@/lib/wp-api";
 // expects params `pa` (path), `po` (post_id), optionally `r` (referrer URL).
 // Server-to-server avoids CORS + lets us forward real client UA so Koko's bot
 // filter doesn't trip.
-const WP_BASE = WP_API.replace(/\/wp-json$/, "");
+// Force https: WP redirects http->https with a 301, which turns the POST beacon
+// into a bodyless GET (301 drops the body) so Koko records nothing. Hitting https
+// directly avoids the redirect. Node runtime + NODE_TLS_REJECT_UNAUTHORIZED=0
+// (ecosystem.config.js) lets the server accept the self-signed cert.
+const WP_BASE = WP_API.replace(/\/wp-json$/, "").replace(/^http:\/\//, "https://");
 const KOKO_URL = `${WP_BASE}/koko-analytics-collect.php`;
 
 // Node runtime (not edge): the server fetches Koko at https://127.0.0.1 which
