@@ -9,7 +9,10 @@ import { WP_API } from "@/lib/wp-api";
 const WP_BASE = WP_API.replace(/\/wp-json$/, "");
 const KOKO_URL = `${WP_BASE}/koko-analytics-collect.php`;
 
-export const runtime = "edge";
+// Node runtime (not edge): the server fetches Koko at https://127.0.0.1 which
+// has a self-signed cert. Only the Node runtime honours NODE_TLS_REJECT_UNAUTHORIZED
+// (set in ecosystem.config.js), so the edge runtime silently drops the beacon.
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>;
