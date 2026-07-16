@@ -29,7 +29,7 @@ export const PARTI_FULL_LIST: PartiInfo[] = [
   { id: 19, singkatan: "BERJASA", nama: "Barisan Jamaah Islamiah Se Malaysia", region: "Semenanjung", logo: "19_BERJASA.png", warna: "#730947" },
   { id: 20, singkatan: "IKATAN", nama: "Parti Ikatan Bangsa Malaysia", region: "Semenanjung", logo: "20_IKATAN.png", warna: "#e60000" },
   { id: 21, singkatan: "PPM", nama: "Parti Punjabi Malaysia", region: "Semenanjung", logo: "21_PPM.png", warna: "#cc9900" },
-  { id: 22, singkatan: "PCM", nama: "Parti Cinta Malaysia", region: "Semenanjung", logo: "22_PCM.png", warna: "#F4E50E" },
+  { id: 22, singkatan: "WAWASAN", nama: "Parti Wawasan Negara", region: "Semenanjung", logo: "22_wawasan.png", warna: "#122047" },
   { id: 23, singkatan: "PFP", nama: "Penang Front Party", region: "Semenanjung", logo: "23_PFP.png", warna: "#ff3333" },
   { id: 24, singkatan: "BERSAMA", nama: "Parti Bersama Malaysia", region: "Semenanjung", logo: "24_BERSAMA.png", warna: "#800000" },
   { id: 25, singkatan: "PAP", nama: "Parti Alternatif Rakyat", region: "Semenanjung", logo: "25_PAP.png", warna: "#000d1a" },
