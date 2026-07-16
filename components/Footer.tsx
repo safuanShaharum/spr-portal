@@ -17,8 +17,6 @@ const LINK_COLUMNS = [
   {
     title: "Maklumat",
     links: [
-      { label: "Tentang Kami", href: "/tentang" },
-      { label: "Hubungi Kami", href: "/hubungi" },
       { label: "Infografik", href: "/infografik-pilihan-raya" },
     ],
   },
